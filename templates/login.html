@@ -1,0 +1,37 @@
+{% extends 'loginbase.html' %}
+
+
+{% block title %} login {% endblock %}
+
+{% block customCSS %} 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+
+{% block body %}
+
+<main class="text-center">
+  <form class="form-signin" action="/login" method="POST">
+    <img src="{{ url_for('static', filename='images/JPaezLogo.png') }}" alt="" width="240" height="185" class="mb-4">
+    <h1 class="text-light mb-2">Iniciar sesión</h1>
+
+    {% if message %}
+      <p style="color: #FFFFFF;">{{ message }}</p>
+    {% endif %}
+
+    <div class="form-floating mb-2">
+      <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+      <label for="floatingInput">Email</label>
+    </div>
+
+    <div class="form-floating mb-4">
+      <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+      <label for="floatingPassword">Contraseña</label>
+    </div>
+
+    <input class="w-100 btn btn-lg btn-dark mb-2" type="submit" value="Iniciar sesión"></input>
+    <a href="/reset_password" style="color: #FFFFFF;">¿Olvidaste tu Contraseña?</a>
+  </form>
+</main>
+    
+{% endblock %}

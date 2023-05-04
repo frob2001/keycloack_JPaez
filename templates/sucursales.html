@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Sucursales {% endblock %}
+
+
+{% block body %}
+
+<style>
+    .btn-lightGray
+    {
+        
+        cursor: pointer;
+        outline: 0;
+        color: #FFFFFF;
+        background-color: #787878;
+        border-color: #787878;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        border: 1px solid transparent;
+        padding: 6px 12px;
+        font-size: 16px;
+        border-radius: .25rem;
+        transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
+    }
+
+    .btn-lightGray:hover {
+        color: #fff;
+        background-color: #494949;
+        border-color: #494949;          
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+    }
+    
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+    @media (max-width: 768px) {
+
+        .tablediv{
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <h1 class="text-light">Sucursales</h1>
+    </div>
+    <div class="col-sm-12 col-md-6" id="createbutton">
+        <a href="/agregarsucursal/">
+            <button class="btn btn-lightGray float-end">Crear nueva sucursal</button>
+          </a>
+    </div>
+  </div>
+
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-dark" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='js/table.js') }}"></script>
+
+
+<div class="tablediv">
+<table class="table table-dark table-striped table-hover" border="1" id="example">
+  <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th><h2>Detalles</h2></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if datos %}
+        {% for key, value in datos.items() %}
+            <tr>
+                <td>{{ value['nombre'] }}</td>
+                <td>{{ value['direccion'] }}</td>
+                <td style="width:25px">
+                    <a href="/detallessucursal/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                </td>
+            </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+</div>
+
+
+{% endblock %}
