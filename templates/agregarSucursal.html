@@ -53,7 +53,7 @@
 <form action="/agregarsucursal/" method="post">
     <div class="form-group">
         <label style="color: #FFFFFF;">Nombre:</label>
-        <input type="text" class="form-control" name="nombre" required>
+        <input type="text" class="form-control" name="nombre" pattern="^(?!\s*$).{3,}$" required>
         <label style="color: #FFFFFF;">Dirección:</label>
         <textarea type="text" class="form-control" name="direccion" rows="3"required></textarea>
         <button class="btn btn-lightGray mt-4" type="submit">Crear</button>

@@ -63,9 +63,9 @@ def sidebar():
 @app.route("/sucursales/")
 @login_required
 def sucursales():
-   datos = fdb.child("Sucursales").get().val()
-   print(datos)
-   return render_template("sucursales.html", datos=datos)
+  datos = fdb.child("Sucursales").get().val()
+  print(datos)
+  return render_template("sucursales.html", datos=datos)
 
 @app.route('/actualizarsucursal/<string:key>', methods=["GET", "POST"])
 @login_required
@@ -102,10 +102,14 @@ def agregar_sucursal():
         direccion = request.form["direccion"]
         nueva_sucursal = {"nombre": nombre, "direccion": direccion}
 
-
+        #validación, si la sucursal ya existe no se repite, si no hay datos guardados, se compara con la lista nombres = [""]
         datos = fdb.child("Sucursales").get().val()
-        nombres = [d['nombre'] for d in datos.values()]
+        nombres= [""]
+        print(datos) #Devuelve none en caso de no tener datos
+        if datos != None:
+           nombres = [d['nombre'] for d in datos.values()]
 
+        #Validación, compara los nombres de todos las sucursales en la base de datos
         if nombre in nombres:
            return render_template('agregarSucursal.html', message='La sucursal ya existe.')
         else:

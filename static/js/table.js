@@ -9,10 +9,14 @@ $(document).ready(function () {
     // DataTable
     var table = $('#example').DataTable({
         //orden de la busqueda, informacion, paginas y longitud de datos
-        dom: "<'row'<'col-sm-12 col-md-6' f><'col-sm-12 col-md-6'>>" +
+        dom:"<'row'<'col-sm-12 col-md-6 my-2' fB><'col-sm-12 col-md-6'>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-5'il><'col-sm-12 col-md-7 text-right'p>>",        
+        "<'row'<'col-sm-12 col-md-5'il><'col-sm-12 col-md-7 my-2 text-right'p>>",
+        buttons: [
+            'excel', 'print'
+        ],
         "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+
         initComplete: function () {
             // Apply the search
             this.api()
@@ -29,7 +33,7 @@ $(document).ready(function () {
         },
         language: {
             processing:     "Cargando...",
-            search:         "Buscar:",
+            search:         "Buscar: ",
             lengthMenu:     "Mostrar:_MENU_",
             info:           "Mostrando _START_ a _END_ de _TOTAL_ elementos",
             infoEmpty:      "Mostrando 0 a 0 de 0 elementos",
@@ -40,15 +44,29 @@ $(document).ready(function () {
             emptyTable:     "No hay elementos (tabla vacía)",
             paginate: {
                 first:      "Primero",
-                previous:   "Anterior",
-                next:       "Siguiente",
+                previous:   "<",
+                next:       ">",
                 last:       "Último"
             },
             aria: {
                 sortAscending:  ": activer pour trier la colonne par ordre croissant",
                 sortDescending: ": activer pour trier la colonne par ordre décroissant"
             }
-        }
+        },
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: ':not(:last-child)'
+                }
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    columns: ':not(:last-child)'
+                }
+            }
+        ]
     });
 });
 
