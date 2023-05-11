@@ -131,6 +131,80 @@ def detalles_sucursal(key):
     return render_template('detallesSucursales.html', key=key, campo=campo)
 
 
+#-----------------------------------------MANEJO DE USUARIOS-----------------------------------------------------
+#Mostrar usuarios
+@app.route("/usuarios/")
+@login_required
+def usuarios():
+  datos = fdb.child("Usuarios").get().val()
+  return render_template("usuarios.html", datos=datos)
+
+#Crear usuarios
+@app.route('/crear_usuario/', methods=['GET', 'POST'])
+def crear_usuario():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        role = request.form['role']
+
+        if password == confirm_password:
+            try:
+                user = auth.create_user_with_email_and_password(email, password)
+                fdb.child("Usuarios").child(user['localId']).set({
+                    "nombre": nombre,
+                    "apellido": apellido,
+                    "email": email,
+                    "role": role
+                })
+
+                return redirect('/usuarios/')
+            except Exception as e:
+                return render_template("agregar_usuarios.html", message=str(e))
+        else:
+            return render_template("agregar_usuarios.html", message="Las contraseñas no corresponden.")
+    else:
+        return render_template("agregar_usuarios.html")
+
+
+#Detalles de usuario
+@app.route('/detalles_usuarios/<string:key>')
+@login_required
+def detalles_usuarios(key):
+    campo = fdb.child('Usuarios').child(key).get().val()
+    return render_template('detalles_usuarios.html', key=key, campo=campo)
+
+
+#Eliminar usuario
+@app.route('/eliminar_usuarios/<string:key>')
+@login_required
+def eliminar_usuarios(key):
+    fdb.child("Usuarios").child(key).remove()
+    flash("El usuario ha sido eliminado con éxito")
+    return redirect(url_for('usuarios'))
+
+#Actualizar usuario
+@app.route('/actualizar_usuarios/<string:key>', methods=["GET", "POST"])
+@login_required
+def actualizar_usuarios(key):
+  campo = fdb.child("Usuarios").child(key).get().val()
+  if request.method == "POST":
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    role = request.form['role']
+    fdb.child("Usuarios").child(key).update({
+        "nombre": nombre,
+        "apellido": apellido,
+        "role": role
+    })
+    flash("El usuario ha sido modificado con éxito")
+    return redirect(url_for('detalles_usuarios', key=key))
+  else:
+    return render_template('actualizar_usuarios.html', key=key, campo=campo)
+
+
 #-----------------------------------------MANEJO DE INVENTARIO-----------------------------------------------------
 
 @app.route("/inventariogeneral/")

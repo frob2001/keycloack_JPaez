@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block title %} Sucursales {% endblock %}
+{% block title %} Usuarios {% endblock %}
 
 
 {% block body %}
@@ -95,14 +95,14 @@
 
 <div class="row">
     <div class="col-sm-12 col-md-6">
-        <h1 class="text-light">Sucursales</h1>
+        <h1 class="text-light">Usuarios</h1>
     </div>
     <div class="col-sm-12 col-md-6" id="createbutton">
-        <a href="/agregarsucursal/">
-            <button class="btn btn-lightGray float-end">Crear nueva sucursal</button>
+        <a href="/crear_usuario/">
+            <button class="btn btn-lightGray float-end">Crear nuevo usuario</button>
           </a>
     </div>
-</div>
+  </div>
 
 
 {% with messages = get_flashed_messages() %}
@@ -132,7 +132,9 @@
   <thead>
         <tr>
             <th class="header">Nombre</th>
-            <th class="header">Dirección</th>
+            <th class="header">Apellido</th>
+            <th class="header">Email</th>
+            <th class="header">Rol</th>
             <th><h2>Detalles</h2></th>
         </tr>
     </thead>
@@ -141,9 +143,11 @@
         {% for key, value in datos.items() %}
             <tr>
                 <td class="data">{{ value['nombre'] }}</td>
-                <td class="data">{{ value['direccion'] }}</td>
+                <td class="data">{{ value['apellido'] }}</td>
+                <td class="data">{{ value['email'] }}</td>
+                <td class="data">{{ value['role'] }}</td>
                 <td style="width:25px">
-                    <a href="/detallessucursal/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                    <a href="/detalles_usuarios/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
                 </td>
             </tr>
         {% endfor %}

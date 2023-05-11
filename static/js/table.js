@@ -11,7 +11,7 @@ $(document).ready(function () {
         //orden de la busqueda, informacion, paginas y longitud de datos
         dom:"<'row'<'col-sm-12 col-md-6 my-2' fB><'col-sm-12 col-md-6'>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-5'il><'col-sm-12 col-md-7 my-2 text-right'p>>",
+        "<'row'<'col-sm-12 col-md-5'ilp><'col-sm-12 col-md-7 my-2 text-right'>>",
         buttons: [
             'excel', 'print'
         ],
@@ -68,5 +68,7 @@ $(document).ready(function () {
             }
         ]
     });
+    $('#example').addClass('only-table');
+    $('#example').wrap('<div class="only-table-wrapper"></div>');
 });
 

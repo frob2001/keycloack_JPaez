@@ -43,23 +43,21 @@
         }
     </style>
 
-    <div class="container">
-        <h1 class="text-light">Editar sucursal</h1> 
-    </div>
-    <div class="container">
-        <form action="/actualizarsucursal/{{ key }}" method="post">
-            <div class="form-group">
-                <label style="color: #FFFFFF;">Nombre:</label>
-                <input type="hidden"  name="id" value="{{key}}">
-                <input type="text" class="form-control" name="nombre" value="{{ campo['nombre'] }}" required>
-                <label style="color: #FFFFFF;">Dirección:</label>
-                <textarea type="text" class="form-control" name="direccion" rows="3" required>{{ campo['direccion'] }}</textarea>
-                <button class="btn btn-lightGray mt-4" type="submit">Guardar</button>
-                <a href="/detallessucursal/{{ key }}"> 
-                    <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
-                </a>
-            </div>
-        </form>
-    </div>
+    <h1 class="text-light">Editar sucursal</h1>
+    <form action="/actualizar_usuarios/{{ key }}" method="post">
+        <div class="form-group">
+            <label style="color: #FFFFFF;">Nombre:</label>
+            <input type="hidden"  name="id" value="{{key}}">
+            <input type="text" class="form-control" name="nombre" value="{{ campo['nombre'] }}" required>
+            <label style="color: #FFFFFF;">Apellido:</label>
+            <input type="text" class="form-control" name="apellido" value="{{ campo['apellido'] }}" required>
+            <label style="color: #FFFFFF;">Rol:</label>
+            <input type="text" class="form-control" name="role" value="{{ campo['role'] }}" required>
+            <button class="btn btn-lightGray mt-4" type="submit">Guardar</button>
+            <a href="/detalles_usuarios/{{ key }}"> 
+                <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
+            </a>
+        </div>
+    </form>
 
 {% endblock %}
