@@ -236,5 +236,50 @@ def crear_producto():
     else:
        return render_template("agregar_inventario.html")
 
+@app.route('/detalles_producto/<string:key>')
+@login_required
+def detalles_producto(key):
+    campo = fdb.child('Inventario').child(key).get().val()
+    return render_template('detalles_inventario.html', key=key, campo=campo)
+
+@app.route('/actualizar_producto/<string:key>', methods=["GET", "POST"])
+@login_required
+def actualizar_producto(key):
+  campo = fdb.child("Inventario").child(key).get().val()
+  if request.method == "POST":
+    codigo = request.form["codigo"]
+    descripcion = request.form["descripcion"]
+    oems = request.form["oems"]
+    marca = request.form["marca"]
+    referencia = request.form["referencia"]
+    precio = float(request.form["precio"])
+    precioiva = float(request.form["precio"])*1.12
+    ubicacion = request.form["ubicacion"]
+    ubicacionespecifica = request.form["ubicacionespecifica"]
+    stock = request.form["stock"]
+    fdb.child("Inventario").child(key).update({
+            "codigo": codigo,
+            "descripcion": descripcion,
+            "oems": oems,
+            "marca": marca,
+            "referencia": referencia,
+            "precio": precio,
+            "precioiva": precioiva,
+            "ubicacion": ubicacion,
+            "ubicacionespecifica": ubicacionespecifica,
+            "stock": stock
+        })
+    flash("El producto se ha sido modificado con éxito")
+    return redirect(url_for('detalles_producto', key=key))
+  else:
+    return render_template('actualizar_inventario.html', key=key, campo=campo)
+
+@app.route('/eliminar_producto/<string:key>')
+@login_required
+def eliminar_producto(key):
+    fdb.child("Inventario").child(key).remove()
+    flash("El producto se ha sido eliminado con éxito")
+    return redirect(url_for('inventario'))
+
 if __name__ == "__main__":
     app.run(debug=True)
