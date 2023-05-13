@@ -26,7 +26,7 @@ def login():
   try:
     user = auth.sign_in_with_email_and_password(email, password)
     session["user"] = user['idToken']
-    return redirect(url_for('sucursales'))
+    return redirect(url_for('inventario'))
   except:
     return render_template('login.html', message='El correo o la contraseña son incorrectos')
 
