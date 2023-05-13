@@ -5,10 +5,8 @@ from config import auth, fdb
 app = Flask(__name__)
 app.secret_key = "felimax2"
 
-#Commit test
+#-----------------------------------------LOGIN-----------------------------------------------------
 
-
-#Verifica el login
 def login_required(f):
   @wraps(f)
   def decorated_function(*args, **kwargs):
@@ -28,7 +26,7 @@ def login():
   try:
     user = auth.sign_in_with_email_and_password(email, password)
     session["user"] = user['idToken']
-    return redirect(url_for('inventariogeneral'))
+    return redirect(url_for('sucursales'))
   except:
     return render_template('login.html', message='El correo o la contraseña son incorrectos')
 
@@ -50,13 +48,6 @@ def reset_password():
 
     return render_template('reset_password.html')
 
-
-@app.route('/sidebar/')
-def sidebar():
-    return render_template('sidebar.html')
-
-
-#Actualización a Firebase
 
 #-----------------------------------------MANEJO DE SUCURSALES-----------------------------------------------------
 
@@ -83,14 +74,7 @@ def actualizar_sucursal(key):
 @app.route('/eliminarsucursal/<string:key>')
 @login_required
 def eliminar_sucursal(key):
-    nombre = fdb.child("Sucursales").child(key).child("nombre").get().val()
-    print(nombre)
     fdb.child("Sucursales").child(key).remove()
-    datos = fdb.child("Inventario").get().val()
-    for nkey, value in datos.items():
-      print(nkey + ": " + str(value["stock_prod"]))
-      fdb.child("Inventario").child(nkey).child("stock_prod").child(nombre).remove()
-      fdb.child("Inventario").child(nkey).child("ubi_prod").child(nombre).remove()
     flash("La sucursal ha sido eliminada con éxito")
     return redirect(url_for('sucursales'))
 
@@ -114,12 +98,6 @@ def agregar_sucursal():
            return render_template('agregarSucursal.html', message='La sucursal ya existe.')
         else:
            fdb.child("Sucursales").push(nueva_sucursal)
-           datos = fdb.child("Inventario").get().val()
-           for key, value in datos.items():
-              print(key + ": " + str(value["stock_prod"]))
-              fdb.child("Inventario").child(key).child("stock_prod").child(nombre).set(0)
-              fdb.child("Inventario").child(key).child("ubi_prod").child(nombre).set("")
-           flash("La sucursal se agregó correctamente")
         return redirect(url_for('sucursales'))
     else:
        return render_template("agregarSucursal.html")
@@ -142,6 +120,7 @@ def usuarios():
 #Crear usuarios
 @app.route('/crear_usuario/', methods=['GET', 'POST'])
 def crear_usuario():
+    datos = fdb.child("Sucursales").get().val()
     if request.method == 'POST':
         nombre = request.form['nombre']
         apellido = request.form['apellido']
@@ -162,11 +141,11 @@ def crear_usuario():
 
                 return redirect('/usuarios/')
             except Exception as e:
-                return render_template("agregar_usuarios.html", message=str(e))
+                return render_template("agregar_usuarios.html", message=str(e), datos=datos)
         else:
-            return render_template("agregar_usuarios.html", message="Las contraseñas no corresponden.")
+            return render_template("agregar_usuarios.html", message="Las contraseñas no corresponden.", datos=datos)
     else:
-        return render_template("agregar_usuarios.html")
+        return render_template("agregar_usuarios.html", datos=datos)
 
 
 #Detalles de usuario
@@ -189,6 +168,7 @@ def eliminar_usuarios(key):
 @app.route('/actualizar_usuarios/<string:key>', methods=["GET", "POST"])
 @login_required
 def actualizar_usuarios(key):
+  datos = fdb.child("Sucursales").get().val()
   campo = fdb.child("Usuarios").child(key).get().val()
   if request.method == "POST":
     nombre = request.form['nombre']
@@ -202,79 +182,59 @@ def actualizar_usuarios(key):
     flash("El usuario ha sido modificado con éxito")
     return redirect(url_for('detalles_usuarios', key=key))
   else:
-    return render_template('actualizar_usuarios.html', key=key, campo=campo)
+    return render_template('actualizar_usuarios.html', key=key, campo=campo, datos=datos)
 
 
 #-----------------------------------------MANEJO DE INVENTARIO-----------------------------------------------------
 
-@app.route("/inventariogeneral/")
+@app.route("/inventario/")
 @login_required
-def inventariogeneral():
-   sucursales = fdb.child("Sucursales").get().val()
-   nom_sucursal = []
-   for value in sucursales.values():
-    nom_sucursal.append(value['nombre'])
-   #print(nom_sucursal)
-   datos = fdb.child("Inventario").get().val()
-   for key, value in datos.items():
-      print(key + ": " + str(value["stock_prod"]))
-   return render_template("inventariogeneral.html", nom_sucursal=nom_sucursal, datos=datos)
+def inventario():
+  datos = fdb.child("Inventario").get().val()
+  print(datos)
+  return render_template("inventario.html", datos=datos)
 
 
-@app.route('/agregarproducto/', methods=["GET", "POST"])
+@app.route('/crear_producto/', methods=["GET", "POST"])
 @login_required
-def agregarproducto():
-    #Consigo los nombres de las sucursales:
-    sucursales = fdb.child("Sucursales").get().val()
-    nom_sucursal = []
-    for value in sucursales.values():
-       nom_sucursal.append(value['nombre'])
+def crear_producto():
     if request.method == "POST":
-        cod_producto = request.form["cod_producto"]
+        codigo = request.form["codigo"]
         descripcion = request.form["descripcion"]
+        oems = request.form["oems"]
         marca = request.form["marca"]
         referencia = request.form["referencia"]
-        precio = round(float(request.form["precio"]),2)
-        precio_iva = round(float(precio) * 1.12, 2)
+        precio = float(request.form["precio"])
+        precioiva = float(request.form["precio"])*1.12
+        ubicacion = request.form["ubicacion"]
+        ubicacionespecifica = request.form["ubicacionespecifica"]
+        stock = request.form["stock"]
 
-        #Ordeno los OEMS en un diccionario
-        gen_values = []  # Lista para almacenar los valores de los inputs en la columna "Código general"
-        for key in request.form.keys():
-          if key.startswith("gen"):
-            gen_values.append(request.form[key])
+        datos = fdb.child("Inventario").get().val()
+        codigos = [""]
+        print(datos) #Devuelve none en caso de no tener datos
+        if datos != None:
+           codigos = [d['codigo'] for d in datos.values()]
 
-        oems = {}
-        
-        for x  in range(1, len(gen_values)+1):
-          print(x)
-          list = []
-          for key in request.form.keys():
-              if key.startswith("gen"+str(x)) | key.startswith("sub"+str(x)) :
-                list.append(request.form[key])
-              oems[x-1] = list  
-          
-
-        
-        #Pido los stocks de cada sucursal
-        stock_prod = {}
-        for value in nom_sucursal:
-           new_value = str(value).replace(" ", "_")
-           stock_prod[value] = int(request.form.get("stock_"+str(new_value), 0))
-
-        ubi_prod = {}
-        for value in nom_sucursal:
-           new_value = str(value).replace(" ", "_")
-           ubi_prod[value] = request.form.get("ubi_"+str(new_value), 0)
-
-        nuevo_producto = {"cod_producto": cod_producto, "descripcion": descripcion, "marca": marca, "referencia": referencia, "precio": precio, "precio_iva": precio_iva, "oems":oems, "stock_prod": stock_prod, "ubi_prod": ubi_prod}
-
-        fdb.child("Inventario").push(nuevo_producto)
-        flash("El producto se añadió correctamente")
-        return redirect(url_for('inventariogeneral'))
+        #Validación, compara los nombres de todos las sucursales en la base de datos
+        if codigo in codigos:
+           return render_template('agregar_inventario.html', message='El producto ya existe.')
+        else:
+           fdb.child("Inventario").push({
+            "codigo": codigo,
+            "descripcion": descripcion,
+            "oems": oems,
+            "marca": marca,
+            "referencia": referencia,
+            "precio": precio,
+            "precioiva": precioiva,
+            "ubicacion": ubicacion,
+            "ubicacionespecifica": ubicacionespecifica,
+            "stock": stock
+        })
+        return redirect(url_for('inventario'))
     else:
-       return render_template("agregarProducto.html", nom_sucursal=nom_sucursal) #Crear agregar productos
-
-
+       return render_template("agregar_inventario.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Inventario {% endblock %}
+
+
+{% block body %}
+
+<style>
+    thead{
+        background: black;
+        color: white;
+    }
+    .dt-button{
+        cursor: pointer;
+        outline: 0;
+        color: #FFFFFF;
+        background-color: #787878;
+        border-color: #787878;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        border: 1px solid transparent;
+        padding: 6px 12px;
+        font-size: 16px;
+        border-radius: .25rem;
+        transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    .download{
+        cursor: pointer;
+        outline: 0;
+        color: #FFFFFF;
+        background-color: #787878;
+        border-color: #787878;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        border: 1px solid transparent;
+        padding: 6px 12px;
+        font-size: 16px;
+        border-radius: .25rem;
+        transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    .btn-lightGray
+    {
+        
+        cursor: pointer;
+        outline: 0;
+        color: #FFFFFF;
+        background-color: #787878;
+        border-color: #787878;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        border: 1px solid transparent;
+        padding: 6px 12px;
+        font-size: 16px;
+        border-radius: .25rem;
+        transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
+    }
+
+    .btn-lightGray:hover {
+        color: #fff;
+        background-color: #494949;
+        border-color: #494949;          
+    }
+
+    table {
+        border-collapse: collapse;
+      border-color: #787878;
+      width: 100%;
+    }
+    th{
+        text-align: left;
+        padding: 8px;
+    }
+    td {
+        text-align: left;
+        padding: 8px;
+        border: 1px solid;
+    }
+    h2, .h2{
+        margin: 0; /* Eliminar los márgenes predeterminados del h2 */
+        vertical-align: bottom;
+    }
+    @media (max-width: 767px) {
+        .only-table-wrapper {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <h1 class="text-light">Inventario</h1>
+    </div>
+    <div class="col-sm-12 col-md-6" id="createbutton">
+        <a href="/crear_producto/">
+            <button class="btn btn-lightGray float-end">Crear nuevo producto</button>
+          </a>
+    </div>
+</div>
+
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-dark" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="{{ url_for('static', filename='js/table.js') }}"></script>
+
+
+<div class="tablediv">
+<table class="table-light table-hover" id="example">
+  <thead>
+        <tr>
+            <th class="header">Código</th>
+            <th class="header">Descripción</th>
+            <th class="header">OEMs</th>
+            <th class="header">Marca</th>
+            <th class="header">Referencia</th>
+            <th class="header">Precio + IVA</th>
+            <th class="header">Stock</th>
+            <th><h2>Detalles</h2></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if datos %}
+        {% for key, value in datos.items() %}
+            <tr>
+                <td class="data">{{ value['codigo'] }}</td>
+                <td class="data">{{ value['descripcion'] }}</td>
+                <td class="data">{{ value['oems'] }}</td>
+                <td class="data">{{ value['marca'] }}</td>
+                <td class="data">{{ value['referencia'] }}</td>
+                <td class="data">{{ value['precioiva'] }}</td>
+                <td class="data">{{ value['stock'] }}</td>
+                <td style="width:25px">
+                    <a href="/detallessucursal/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                </td>
+            </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+</div>
+
+
+
+{% endblock %}

@@ -159,19 +159,24 @@ div.dataTables_length select {
 ----------------------------------------------------- */
 
 @media (max-width: 768px) {
+    .wrapper{
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
     #sidebar {
         margin-left: -250px;
     }
     #sidebar.active {
         margin-left: 0;
     }
-    #sidebarCollapse{
+    #sidebarCollapse {
         display: block;
     }
-    #createbutton{
+    #createbutton {
         text-align: left;
     }
 }
+
 
 /* ---------------------------------------------------
     BOTONES

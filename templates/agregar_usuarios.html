@@ -69,7 +69,18 @@
 
 
     <label style="color: #FFFFFF;">Rol</label>
-    <input type="text" class="form-control" name="role" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+    <select name="role" id="role" class="form-control">
+        <option>Administrador</option>
+
+        {% if datos %}
+        {% for key, value in datos.items() %}
+                <option>{{ value['nombre'] }}</td>
+        {% endfor %}
+        {% endif %}
+
+    </select>
+
+    <input type="hidden" name="role_text" id="role_text">
 
 
     <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
@@ -77,5 +88,15 @@
         <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
     </a>
 </form>
+
+<script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', event => {
+        const select = document.querySelector('#role');
+        const selectedOptionText = select.options[select.selectedIndex].text;
+        const hiddenInput = document.querySelector('#role_text');
+        hiddenInput.value = selectedOptionText;
+    });
+</script>
 
 {% endblock %}
