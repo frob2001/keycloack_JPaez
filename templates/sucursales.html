@@ -70,11 +70,11 @@
 
     table {
         border-collapse: collapse;
-      border-color: #787878;
-      width: 100%;
+        border-color: #787878;
+        width: 100%;
     }
     th{
-        text-align: left;
+        text-align: center;
         padding: 8px;
     }
     td {
@@ -83,12 +83,14 @@
         border: 1px solid;
     }
     h2, .h2{
-        margin: 0; /* Eliminar los márgenes predeterminados del h2 */
-        vertical-align: bottom;
+        margin: 0;
     }
     @media (max-width: 767px) {
         .only-table-wrapper {
             overflow-x: auto;
+        }
+        h2, .h2{
+            font-size: 100%;
         }
     }
 </style>

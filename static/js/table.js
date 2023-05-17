@@ -49,8 +49,8 @@ $(document).ready(function () {
                 last:       "Último"
             },
             aria: {
-                sortAscending:  ": activer pour trier la colonne par ordre croissant",
-                sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                sortAscending:  "Presiona para ordenar de forma ascendente",
+                sortDescending: "Presiona para ordenar de forma descendente"
             }
         },
         buttons: [

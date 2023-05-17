@@ -282,4 +282,4 @@ def eliminar_producto(key):
     return redirect(url_for('inventario'))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
