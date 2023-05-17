@@ -202,12 +202,20 @@ def crear_producto():
         codigo = request.form["codigo"]
         descripcion = request.form["descripcion"]
         oems = request.form["oems"]
+        if oems == "":
+           oems = "N/A"
         marca = request.form["marca"]
         referencia = request.form["referencia"]
+        if referencia == "":
+           referencia = "N/A"
         precio = float(request.form["precio"])
         precioiva = round(float(request.form["precio"])*1.12, 2)
         ubicacion = request.form["ubicacion"]
+        if ubicacion == "":
+           ubicacion = "N/A"
         ubicacionespecifica = request.form["ubicacionespecifica"]
+        if ubicacionespecifica == "":
+           ubicacionespecifica = "N/A"
         stock = request.form["stock"]
 
         datos = fdb.child("Inventario").get().val()
@@ -250,12 +258,20 @@ def actualizar_producto(key):
     codigo = request.form["codigo"]
     descripcion = request.form["descripcion"]
     oems = request.form["oems"]
+    if oems == "":
+        oems = "N/A"
     marca = request.form["marca"]
     referencia = request.form["referencia"]
+    if referencia == "":
+        referencia = "N/A"
     precio = float(request.form["precio"])
-    precioiva = float(request.form["precio"])*1.12
+    precioiva = round(float(request.form["precio"])*1.12, 2)
     ubicacion = request.form["ubicacion"]
+    if ubicacion == "":
+        ubicacion = "N/A"
     ubicacionespecifica = request.form["ubicacionespecifica"]
+    if ubicacionespecifica == "":
+        ubicacionespecifica = "N/A"
     stock = request.form["stock"]
     fdb.child("Inventario").child(key).update({
             "codigo": codigo,

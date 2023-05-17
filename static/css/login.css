@@ -37,20 +37,25 @@ body {
   margin-bottom: 10px;
 }
 
+.logo{
+  width:240px; 
+  height:185px; 
+}
+
 
 
 @media (max-width: 768px) {
     body {
-      justify-content: center; /* Centrar contenido en pantalla pequeña */
+      justify-content: center;
+      background-image: none;
     }
   
     .form-signin {
-      margin-right: 0px; /* Remover margen derecho en pantalla pequeña */
+      margin-right: 0px;
     }
-  
-    /* Cambiar tamaño de imagen de fondo en pantalla pequeña */
-    body {
-      background-size: 100%; /* Aumentar tamaño de imagen a 100% */
+    .logo{
+      width:200px; 
+      height:auto; 
     }
   }
 

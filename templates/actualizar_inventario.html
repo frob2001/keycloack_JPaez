@@ -43,48 +43,48 @@
         }
     </style>
 
-    <div class="container">
-        <h1 class="text-light">Editar producto</h1> 
+
+<h1 class="text-light">Editar producto</h1> 
+
+
+<form action="/actualizar_producto/{{ key }}" method="post">
+    <div class="form-group">
+        <input type="hidden"  name="id" value="{{key}}">
+        <label style="color: #FFFFFF;">Código</label>
+        <input type="text" class="form-control" name="codigo" value="{{ campo['codigo'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+    
+        <label style="color: #FFFFFF;">Descripción</label>
+        <input type="text" class="form-control" name="descripcion" value="{{ campo['descripcion'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+    
+        <label style="color: #FFFFFF;">OEMs</label>
+        <input type="text" class="form-control" name="oems" value="{{ campo['oems'] }}">
+    
+        <label style="color: #FFFFFF;">Marca</label>
+        <input type="text" class="form-control" name="marca" value="{{ campo['marca'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+    
+        <label style="color: #FFFFFF;">Referencia</label>
+        <input type="text" class="form-control" name="referencia" value="{{ campo['referencia'] }}">
+    
+        <label style="color: #FFFFFF;">Precio</label>
+        <input type="number" class="form-control" name="precio" value="{{ campo['precio'] }}"required>
+    
+        <label style="color: #FFFFFF;">Ubicación</label>
+        <input type="text" class="form-control" name="ubicacion" value="{{ campo['ubicacion'] }}">
+    
+        <label style="color: #FFFFFF;">Ubicación especifica</label>
+        <input type="text" class="form-control" name="ubicacionespecifica" value="{{ campo['ubicacionespecifica'] }}">
+    
+        <label style="color: #FFFFFF;">Stock</label>
+        <input type="number" class="form-control" name="stock" value="{{ campo['stock'] }}" required>
+        
+        
+        
+        <button class="btn btn-lightGray mt-4" type="submit">Guardar</button>
+        <a href="/detalles_producto/{{ key }}"> 
+            <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
+        </a>
     </div>
-    <div class="container">
-        <form action="/actualizar_producto/{{ key }}" method="post">
-            <div class="form-group">
-                <input type="hidden"  name="id" value="{{key}}">
-                <label style="color: #FFFFFF;">Código</label>
-                <input type="text" class="form-control" name="codigo" value="{{ campo['codigo'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Descripción</label>
-                <input type="text" class="form-control" name="descripcion" value="{{ campo['descripcion'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">OEMs</label>
-                <input type="text" class="form-control" name="oems" value="{{ campo['oems'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Marca</label>
-                <input type="text" class="form-control" name="marca" value="{{ campo['marca'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Referencia</label>
-                <input type="text" class="form-control" name="referencia" value="{{ campo['referencia'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Precio</label>
-                <input type="text" class="form-control" name="precio" value="{{ campo['precio'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Ubicación</label>
-                <input type="text" class="form-control" name="ubicacion" value="{{ campo['ubicacion'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Ubicación especifica</label>
-                <input type="text" class="form-control" name="ubicacionespecifica" value="{{ campo['ubicacionespecifica'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-            
-                <label style="color: #FFFFFF;">Stock</label>
-                <input type="text" class="form-control" name="stock" value="{{ campo['stock'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
-                
-                
-                
-                <button class="btn btn-lightGray mt-4" type="submit">Guardar</button>
-                <a href="/detalles_producto/{{ key }}"> 
-                    <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
-                </a>
-            </div>
-        </form>
-    </div>
+</form>
+
 
 {% endblock %}
