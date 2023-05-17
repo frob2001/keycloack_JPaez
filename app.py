@@ -205,7 +205,7 @@ def crear_producto():
         marca = request.form["marca"]
         referencia = request.form["referencia"]
         precio = float(request.form["precio"])
-        precioiva = float(request.form["precio"])*1.12
+        precioiva = round(float(request.form["precio"])*1.12, 2)
         ubicacion = request.form["ubicacion"]
         ubicacionespecifica = request.form["ubicacionespecifica"]
         stock = request.form["stock"]

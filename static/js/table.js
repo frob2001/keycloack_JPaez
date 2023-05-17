@@ -2,7 +2,7 @@ $(document).ready(function () {
     // Setup - add a text input to each header cell
     $('#example thead th:not(:last-child)').each(function () {
         var title = $(this).text();
-        $(this).html('<input type="text" id="tableinput" placeholder="Buscar por ' + title + '" />' + "<h2>" + title + "</h2>")
+        $(this).html('<input type="text" id="tableinput"/>' + "<h2>" + title + "</h2>")
     });
     
 
@@ -10,7 +10,7 @@ $(document).ready(function () {
     var table = $('#example').DataTable({
         //orden de la busqueda, informacion, paginas y longitud de datos
         dom:"<'row'<'col-sm-12 col-md-6 my-2' fB><'col-sm-12 col-md-6'>>" +
-        "<'row'<'col-sm-12'tr>>" +
+        "<tr>" +
         "<'row'<'col-sm-12 col-md-5'ilp><'col-sm-12 col-md-7 my-2 text-right'>>",
         buttons: [
             'excel', 'print'

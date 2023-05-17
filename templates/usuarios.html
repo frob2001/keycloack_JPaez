@@ -7,10 +7,6 @@
 {% block body %}
 
 <style>
-    thead{
-        background: black;
-        color: white;
-    }
     .dt-button{
         cursor: pointer;
         outline: 0;
@@ -68,30 +64,38 @@
         border-color: #494949;          
     }
 
+    
+
     table {
-        border-collapse: collapse;
-      border-color: #787878;
-      width: 100%;
+        width: 100%;
+    }
+    tbody{
+        background-color: white;
     }
     th{
         text-align: center;
         padding: 8px;
     }
+    thead{
+        background: black;
+        color: white;
+    }
     td {
-        text-align: left;
+        text-align: center;
         padding: 8px;
-        border: 1px solid;
     }
     h2, .h2{
         margin: 0;
     }
-    @media (max-width: 767px) {
-        .only-table-wrapper {
-            overflow-x: auto;
-        }
-        h2, .h2{
-            font-size: 100%;
-        }
+    table.table-bordered{
+        border:1px solid black;
+        margin-top:20px;
+    }
+    table.table-bordered > thead > tr > th{
+        border:1px solid black;
+    }
+    table.table-bordered > tbody > tr > td{
+        border:1px solid black;
     }
 </style>
 
@@ -130,8 +134,8 @@
 
 
 <div class="tablediv">
-<table class="table-light table-hover" id="example">
-  <thead>
+    <table class="table table-striped table-bordered" id="example">
+    <thead>
         <tr>
             <th class="header">Nombre</th>
             <th class="header">Apellido</th>
