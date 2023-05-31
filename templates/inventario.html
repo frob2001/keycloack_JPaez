@@ -84,6 +84,7 @@
     }
     h2, .h2{
         margin: 0;
+        font-size: 100%;
     }
     table.table-bordered{
         border:1px solid black;
@@ -162,7 +163,15 @@
             <tr>
                 <td class="data">{{ value['codigo'] }}</td>
                 <td class="data">{{ value['descripcion'] }}</td>
-                <td class="data">{{ value['oems'] }}</td>
+                
+                <td class="data">
+                    {% for data in value['oems'].values() %}
+                        {% for x in range (1, data|length) %}
+                            {{ data[0] }}{{ data[x] }} <br>
+                        {% endfor %}
+                    {% endfor %}
+                </td>                 
+                
                 <td class="data">{{ value['marca'] }}</td>
                 <td class="data">{{ value['referencia'] }}</td>
                 <td class="data">{{ value['precioiva'] }}</td>

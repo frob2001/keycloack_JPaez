@@ -33,12 +33,39 @@
     }
 
     .form-control {
-        width: 500px;
+        width: 50%;
     }
+
+    .subproductos {
+        display: flex;
+    }
+    
+    .subproductos button {
+        margin-left: 10px;
+    }
+
+    .myfieldset .inputs {
+        display: flex;
+        width: 100%;
+    }
+
+    .myfieldset {
+        padding: 5px;
+    }
+    
+    .myfieldset input[type="text"] {
+        width: calc(25% - 10px);
+    }
+    
+    
 
     @media screen and (max-width: 768px) {
         .form-control {
             width: 100%;
+        }
+        .myfieldset input[type="text"] {
+            margin: 5px;
+            width: calc(50% - 10px);
         }
     }
 </style>
@@ -58,8 +85,16 @@
     <label style="color: #FFFFFF;">Descripción</label>
     <input type="text" class="form-control" name="descripcion" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
 
-    <label style="color: #FFFFFF;">OEMs</label>
-    <input type="text" class="form-control" name="oems">
+    <label style="color: #FFFFFF;">OEM</label><br>
+    <fieldset class="myfieldset">
+        <div class="inputs">
+            <input type="text" name="oem0" class="form-control oem" placeholder="Código">
+            <input type="text" name="oem0" class="form-control oem" placeholder="Subcódigo">
+        </div>
+        <button type="button" class="btn btn-lightGray mt-4" onclick="agregarSubProducto(this)">Agregar subproducto</button>
+    </fieldset>    
+    <button type="button" class="btn btn-lightGray mt-4" onclick="agregarProducto()">Agregar producto</button>
+    <br>
 
     <label style="color: #FFFFFF;">Marca</label>
     <input type="text" class="form-control" name="marca" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
@@ -87,5 +122,71 @@
         <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
     </a>
 </form>
+
+<script>
+    let contador = 1;
+
+    function agregarSubProducto(btn) {
+        var div = document.createElement("div");
+        div.setAttribute("class", "subproductos");
+        let inputName = btn.parentNode.querySelector('input').getAttribute('name');
+        div.innerHTML = '<input type="text" class="form-control oem" name="' + inputName + '" placeholder="Subcódigo"> <button type="button" class="btn-danger" onclick="eliminarSubProducto(this)">Eliminar subproducto</button>';
+    
+        // Insertar el nuevo input antes del botón de "Agregar subproducto"
+        btn.parentNode.insertBefore(div, btn);
+    }
+
+    function eliminarSubProducto(btn) {
+        btn.parentNode.remove();
+    }
+
+    function agregarProducto() {
+        // Crear un nuevo fieldset
+        var fieldset = document.createElement("fieldset");
+        fieldset.setAttribute("class", "myfieldset");
+    
+        var input = document.createElement("input");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "oem" + contador);
+        input.setAttribute("class", "form-control oem");
+        input.setAttribute("placeholder", "Código");
+        fieldset.appendChild(input);
+    
+        input = document.createElement("input");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "oem" + contador);
+        input.setAttribute("class", "form-control oem");
+        input.setAttribute("placeholder", "Subcódigo");
+        fieldset.appendChild(input);
+        
+    
+        var button = document.createElement("button");
+        button.setAttribute("type", "button");
+        button.setAttribute("class", "btn btn-lightGray mt-4");
+        button.setAttribute("onclick", "agregarSubProducto(this)");
+        button.textContent = "Agregar subproducto";
+        fieldset.appendChild(button);
+    
+        var btnEliminar = document.createElement("button");
+        btnEliminar.setAttribute("type", "button");
+        btnEliminar.setAttribute("class", "btn-danger mt-4");
+        btnEliminar.setAttribute("onclick", "eliminarProducto(this)");
+        btnEliminar.textContent = "Eliminar producto";
+        fieldset.appendChild(btnEliminar);
+    
+        contador++;
+    
+        // Insertar el nuevo fieldset después del último fieldset
+        var form = document.querySelector("form");
+        var lastFieldset = form.querySelector("fieldset:last-of-type");
+        form.insertBefore(fieldset, lastFieldset.nextSibling);
+    }
+    
+    
+
+    function eliminarProducto(btn) {
+        btn.parentNode.remove();
+    }
+</script>
 
 {% endblock %}

@@ -132,11 +132,13 @@ def crear_usuario():
         if password == confirm_password:
             try:
                 user = auth.create_user_with_email_and_password(email, password)
+                idToken = user['idToken']
                 fdb.child("Usuarios").child(user['localId']).set({
                     "nombre": nombre,
                     "apellido": apellido,
                     "email": email,
-                    "role": role
+                    "role": role,
+                    "idToken":idToken
                 })
 
                 return redirect('/usuarios/')
@@ -160,7 +162,13 @@ def detalles_usuarios(key):
 @app.route('/eliminar_usuarios/<string:key>')
 @login_required
 def eliminar_usuarios(key):
+    campo = fdb.child('Usuarios').child(key).get().val()
+
+    idToken = campo['idToken']
+    auth.delete_user_account(idToken)
+    
     fdb.child("Usuarios").child(key).remove()
+
     flash("El usuario ha sido eliminado con éxito")
     return redirect(url_for('usuarios'))
 
@@ -199,21 +207,26 @@ def inventario():
 @login_required
 def crear_producto():
     if request.method == "POST":
-        codigo = request.form["codigo"]
-        descripcion = request.form["descripcion"]
-        oems = request.form["oems"]
+        codigo = request.form["codigo"].upper()
+        descripcion = request.form["descripcion"].upper()
+        data = {}
+        for key in request.form.keys():
+           if key.startswith('oem'):
+              data[key] = [x.upper() for x in request.form.getlist(key)]
+
+        oems = data
         if oems == "":
            oems = "N/A"
-        marca = request.form["marca"]
-        referencia = request.form["referencia"]
+        marca = request.form["marca"].upper()
+        referencia = request.form["referencia"].upper()
         if referencia == "":
            referencia = "N/A"
         precio = float(request.form["precio"])
         precioiva = round(float(request.form["precio"])*1.12, 2)
-        ubicacion = request.form["ubicacion"]
+        ubicacion = request.form["ubicacion"].upper()
         if ubicacion == "":
            ubicacion = "N/A"
-        ubicacionespecifica = request.form["ubicacionespecifica"]
+        ubicacionespecifica = request.form["ubicacionespecifica"].upper()
         if ubicacionespecifica == "":
            ubicacionespecifica = "N/A"
         stock = request.form["stock"]
@@ -242,7 +255,7 @@ def crear_producto():
         })
         return redirect(url_for('inventario'))
     else:
-       return render_template("agregar_inventario.html")
+       return render_template("agregar_inventario_test.html")
 
 @app.route('/detalles_producto/<string:key>')
 @login_required
@@ -255,7 +268,6 @@ def detalles_producto(key):
 def actualizar_producto(key):
   campo = fdb.child("Inventario").child(key).get().val()
   if request.method == "POST":
-    codigo = request.form["codigo"]
     descripcion = request.form["descripcion"]
     oems = request.form["oems"]
     if oems == "":
@@ -274,7 +286,7 @@ def actualizar_producto(key):
         ubicacionespecifica = "N/A"
     stock = request.form["stock"]
     fdb.child("Inventario").child(key).update({
-            "codigo": codigo,
+            "codigo": campo['codigo'] ,
             "descripcion": descripcion,
             "oems": oems,
             "marca": marca,
@@ -296,6 +308,8 @@ def eliminar_producto(key):
     fdb.child("Inventario").child(key).remove()
     flash("El producto se ha sido eliminado con éxito")
     return redirect(url_for('inventario'))
+
+  
 
 if __name__ == "__main__":
     app.run(debug=True)

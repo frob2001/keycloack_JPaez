@@ -50,8 +50,7 @@
 <form action="/actualizar_producto/{{ key }}" method="post">
     <div class="form-group">
         <input type="hidden"  name="id" value="{{key}}">
-        <label style="color: #FFFFFF;">Código</label>
-        <input type="text" class="form-control" name="codigo" value="{{ campo['codigo'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+        <h1 style="color: #FFFFFF; font-size:x-large;">{{ campo['codigo'] }}</h1>
     
         <label style="color: #FFFFFF;">Descripción</label>
         <input type="text" class="form-control" name="descripcion" value="{{ campo['descripcion'] }}" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
