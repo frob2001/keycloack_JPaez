@@ -58,24 +58,31 @@ def sucursales():
   print(datos)
   return render_template("sucursales.html", datos=datos)
 
-@app.route('/actualizarsucursal/<string:key>', methods=["GET", "POST"])
+@app.route('/actualizarsucursal/<string:key>/<string:nombre>', methods=["GET", "POST"])
 @login_required
-def actualizar_sucursal(key):
+def actualizar_sucursal(key, nombre):
   campo = fdb.child("Sucursales").child(key).get().val()
   if request.method == "POST":
-    nombre = request.form["nombre"]
-    direccion = request.form["direccion"]
-    fdb.child("Sucursales").child(key).update({"nombre": nombre, "direccion": direccion})
-    flash("La sucursal ha sido modificada con éxito")
-    return redirect(url_for('detalles_sucursal', key=key))
+    if nombre == "9 de Octubre":
+       flash("La sucursal matriz no se puede actualizar")
+       return redirect(url_for('detalles_sucursal', key=key))
+    else:   
+       nombre = request.form["nombre"]
+       direccion = request.form["direccion"]
+       fdb.child("Sucursales").child(key).update({"nombre": nombre, "direccion": direccion})
+       flash("La sucursal ha sido modificada con éxito")
+       return redirect(url_for('detalles_sucursal', key=key))
   else:
     return render_template('actualizarSucursal.html', key=key, campo=campo)
 
-@app.route('/eliminarsucursal/<string:key>')
+@app.route('/eliminarsucursal/<string:key>/<string:nombre>')
 @login_required
-def eliminar_sucursal(key):
-    fdb.child("Sucursales").child(key).remove()
-    flash("La sucursal ha sido eliminada con éxito")
+def eliminar_sucursal(key, nombre):
+    if nombre == "9 de Octubre":
+       flash("La sucursal no se puede eliminar, es la sucursal matriz")
+    else:   
+       fdb.child("Sucursales").child(key).remove()
+       flash("La sucursal ha sido eliminada con éxito")
     return redirect(url_for('sucursales'))
 
 @app.route('/agregarsucursal/', methods=["GET", "POST"])
@@ -255,7 +262,7 @@ def crear_producto():
         })
         return redirect(url_for('inventario'))
     else:
-       return render_template("agregar_inventario_test.html")
+       return render_template("agregar_inventario.html")
 
 @app.route('/detalles_producto/<string:key>')
 @login_required

@@ -47,7 +47,7 @@
         <h1 class="text-light">Editar sucursal</h1> 
     </div>
     <div class="container">
-        <form action="/actualizarsucursal/{{ key }}" method="post">
+        <form action="/actualizarsucursal/{{ key }}/{{ campo['nombre'] }}" method="post">
             <div class="form-group">
                 <label style="color: #FFFFFF;">Nombre:</label>
                 <input type="hidden"  name="id" value="{{key}}">

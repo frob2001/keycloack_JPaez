@@ -63,7 +63,7 @@
 
 <div style="margin-bottom: 10px;">
     <h1 class="text-light">{{ campo['nombre'] }}</h1>
-    <a href="/actualizarsucursal/{{ key }}">
+    <a href="/actualizarsucursal/{{ key }}/{{ campo['nombre'] }}">
         <button class="btn btn-lightGray">Editar sucursal</button>
     </a>
     <a href="{{ url_for('sucursales') }}"> 
@@ -85,7 +85,7 @@
 <h1 style="color: #FFFFFF; font-size:x-large;">Dirección</h1>
 <p style="color: #FFFFFF;">{{ campo['direccion'] }}</p>
 
-<a href="/eliminarsucursal/{{ key }}" onclick="return confirm('¿Seguro deseas eliminar? Este campo afecta al inventario directamente y puede perjudicar la base de datos gravemente')"> 
+<a href="/eliminarsucursal/{{ key }}/{{ campo['nombre'] }}" onclick="return confirm('¿Seguro deseas eliminar? Este campo afecta al inventario directamente y puede perjudicar la base de datos gravemente')"> 
     <button class="btn btn-danger">
         Eliminar
     </button>
