@@ -20,7 +20,10 @@
     }
     
     .right {
+      margin-bottom: 20px;
       float: right;
+      border-radius: 5px;
+      padding: 15px;
     }
     
     input[type="text"] {
@@ -28,6 +31,13 @@
     }
     input[type="number"] {
       width: 80%;
+    }
+
+    .right input[type="text"] {
+      width: 100%;
+    }
+    .right input[type="number"] {
+      width: 100%;
     }
     
     @media (max-width: 600px) {
@@ -39,6 +49,8 @@
 </style>
 <h1 class="text-light">Agregar producto</h1> 
 
+<br>
+
 {% if message %}
     <p style="color: #FFFFFF;">{{ message }}</p>
 {% endif %}
@@ -48,7 +60,9 @@
 <form action="{{ url_for('crear_producto') }}" method="post">
   <div class="left">
     <label style="color: #FFFFFF;">Código</label>
-    <input type="text" class="form-control" name="codigo" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+    <input type="text" class="form-control codigo" id="codigo" name="codigo" oninput="verificarCodigo()" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+
+    <span style="color: #FFFFFF;" id="mensaje"></span> <br>
 
     <label style="color: #FFFFFF;">Descripción</label>
     <input type="text" class="form-control" name="descripcion" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
@@ -65,7 +79,7 @@
     <br>
 
     <label style="color: #FFFFFF;">Precio</label>
-    <input type="number" class="form-control" name="precio" required>
+    <input type="text" class="form-control" name="precio" required>
 
     <label style="color: #FFFFFF;">Marca</label>
     <input type="text" class="form-control" name="marca" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
@@ -73,20 +87,25 @@
     <label style="color: #FFFFFF;">Referencia</label>
     <input type="text" class="form-control" name="referencia">
   </div>
-  <div class="right">
-    <label style="color: #FFFFFF;">Ubicación</label>
-    <input type="text" class="form-control" name="ubicacion">
+  
+    {% if nombres %}
+    {% for nom in nombres %}
+    <h3 class="text-light"> {{ nom }}</h3> 
+    <div class="right" style="background-color: black;">
+        <label style="color: #FFFFFF;">Ubicación</label>
+        <input type="text" class="form-control" name="ubicacion {{ nom }}">
+        <label style="color: #FFFFFF;">Ubicación especifica</label>
+        <input type="text" style="height: 70px;" class="form-control" name="ubicacionespecifica {{ nom }}">
+        <label style="color: #FFFFFF;">Stock</label>
+        <input type="text" class="form-control" name="stock {{ nom }}"  pattern="[0-9]*">
+    </div>
+    {% endfor %}
+    {% endif %}
 
-    <label style="color: #FFFFFF;">Ubicación especifica</label>
-    <input type="text" class="form-control" name="ubicacionespecifica">
-
-    <label style="color: #FFFFFF;">Stock</label>
-    <input type="number" class="form-control" name="stock"  pattern="[0-9]*" required>
-  </div>
-  <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
-  <a href="/inventario/"> 
-      <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
-  </a>
+    <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
+    <a href="/inventario/"> 
+        <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
+    </a>
 </form>
 
 </body>
@@ -160,6 +179,45 @@
       function eliminarProducto(btn) {
         btn.parentNode.remove();
       }
+
+      function verificarCodigo() {
+        var codigo = document.getElementById("codigo").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/verificar_codigo");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var respuesta = JSON.parse(xhr.responseText);
+                if (respuesta.existe) {
+                    // El código ya existe en la base de datos
+                    mensaje.textContent = "El código ya existe";
+                } else {
+                    // El código no existe en la base de datos
+                    mensaje.textContent = "No hay ningun producto con este codigo en la base de datos :)";
+                }
+            }
+        };
+        xhr.send("codigo=" + codigo);
+      }
+
+      const forceKeyPressUppercase = (e) => {
+        let el = e.target;
+        let charInput = e.keyCode;
+        if((charInput >= 97) && (charInput <= 122)) { // lowercase
+          if(!e.ctrlKey && !e.metaKey && !e.altKey) { // no modifier key
+            let newChar = charInput - 32;
+            let start = el.selectionStart;
+            let end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + String.fromCharCode(newChar) + el.value.substring(end);
+            el.setSelectionRange(start+1, start+1);
+            e.preventDefault();
+          }
+        }
+      };
+    
+      document.querySelectorAll(".codigo").forEach(function(current) {
+        current.addEventListener("keypress", forceKeyPressUppercase);
+      });
       
 </script>
 

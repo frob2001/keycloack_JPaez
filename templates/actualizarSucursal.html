@@ -32,34 +32,59 @@
             border-color: #494949;          
         }
 
-        .form-control {
-            width: 500px;
+        form {
+            width: 80%;
+            margin: 0 auto;
         }
-
-        @media screen and (max-width: 768px) {
-            .form-control {
-                width: 100%;
+        
+        .left, .right {
+            width: 50%;
+        }
+        
+        .left {
+            float: left;
+        }
+        
+        .right {
+            margin-bottom: 20px;
+            float: right;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .right input[type="text"] {
+            width: 80%;
+        }
+        .right textarea {
+            width: 80%;
+        }
+        
+        @media (max-width: 600px) {
+            .left, .right {
+            width: 100%;
+            float: none;
             }
         }
     </style>
 
-    <div class="container">
-        <h1 class="text-light">Editar sucursal</h1> 
-    </div>
-    <div class="container">
-        <form action="/actualizarsucursal/{{ key }}/{{ campo['nombre'] }}" method="post">
-            <div class="form-group">
-                <label style="color: #FFFFFF;">Nombre:</label>
-                <input type="hidden"  name="id" value="{{key}}">
-                <input type="text" class="form-control" name="nombre" value="{{ campo['nombre'] }}" required>
-                <label style="color: #FFFFFF;">Dirección:</label>
-                <textarea type="text" class="form-control" name="direccion" rows="3" required>{{ campo['direccion'] }}</textarea>
-                <button class="btn btn-lightGray mt-4" type="submit">Guardar</button>
-                <a href="/detallessucursal/{{ key }}"> 
-                    <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
-                </a>
-            </div>
-        </form>
-    </div>
+
+    <h1 class="text-light">Editar sucursal</h1> 
+    <br>
+
+    
+    <form action="/actualizarsucursal/{{ key }}/{{ campo['nombre'] }}" method="post">
+        <div class="left">
+            <label style="color: #FFFFFF;">Nombre:</label>
+            <input type="hidden"  name="id" value="{{key}}">
+            <input type="text" class="form-control" name="nombre" value="{{ campo['nombre'] }}" required>
+            <label style="color: #FFFFFF;">Dirección:</label>
+            <textarea type="text" class="form-control" name="direccion" rows="3" required>{{ campo['direccion'] }}</textarea>
+            <button class="btn btn-lightGray mt-4" type="submit">Guardar</button>
+            <a href="/detallessucursal/{{ key }}"> 
+                <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
+            </a>
+        </div>
+    </form>
+    
 
 {% endblock %}

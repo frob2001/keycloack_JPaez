@@ -7,6 +7,7 @@
 {% block body %}
 
     <style>
+
         .btn-lightGray
         {
             
@@ -32,34 +33,50 @@
             border-color: #494949;          
         }
 
-        .arriba {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin-bottom: 50px;
-        }
-
-        .arriba h1 {
-            margin-right: 10px;
-        }
-
-        .arriba button {
-            margin-left: 10px;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .arriba {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .arriba button{
-                margin-left: 0px;
-            }
-        }
     
         
+    /*Izq der*/
+
+        .details {
+            width: 80%;
+            margin: 0 auto;
+        }
+            
+        .left, .right {
+          width: 50%;
+        }
+        
+        .left {
+          float: left;
+        }
+        
+        .right {
+          margin-bottom: 20px;
+          float: right;
+          border-radius: 5px;
+          padding: 15px;
+        }
+        
+        h1, p {
+          width: 80%;
+        }
+    
+        .right h1, p {
+          width: 100%;
+        }
+        .right h1, p {
+          width: 100%;
+        }
+        
+        @media (max-width: 600px) {
+          .left, .right {
+            width: 100%;
+            float: none;
+          }
+        }
     </style>
+
+
 
 <div style="margin-bottom: 10px;">
     <h1 class="text-light">{{ campo['codigo'] }}</h1>
@@ -70,6 +87,10 @@
         <button class="btn btn-lightGray">Cancelar</button>
     </a>
 </div>
+
+<br>
+
+<div class="details"> 
 
 
 {% with messages = get_flashed_messages() %}
@@ -82,11 +103,18 @@
     {% endif %}
 {% endwith %}
 
+<div class="left">
+
 <h1 style="color: #FFFFFF; font-size:x-large;">Descripción</h1>
 <p style="color: #FFFFFF;">{{ campo['descripcion'] }}</p>
 
 <h1 style="color: #FFFFFF; font-size:x-large;">OEMs</h1>
-<p style="color: #FFFFFF;">{{ campo['oems'] }}</p>
+
+{% for data in campo['oems'].values() %}
+    {% for x in range (1, data|length) %}
+        <p style="color: #FFFFFF;">{{ data[0] }}{{ data[x] }}</p>
+    {% endfor %}
+{% endfor %}
 
 <h1 style="color: #FFFFFF; font-size:x-large;">Marca</h1>
 <p style="color: #FFFFFF;">{{ campo['marca'] }}</p>
@@ -100,19 +128,74 @@
 <h1 style="color: #FFFFFF; font-size:x-large;">Precio(IVA)</h1>
 <p style="color: #FFFFFF;">{{ campo['precioiva'] }}</p>
 
-<h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
-<p style="color: #FFFFFF;">{{ campo['ubicacion'] }}</p>
+</div>
 
-<h1 style="color: #FFFFFF; font-size:x-large;">Ubicación especifica</h1>
-<p style="color: #FFFFFF;">{{ campo['ubicacionespecifica'] }}</p>
 
-<h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
-<p style="color: #FFFFFF;">{{ campo['stock'] }}</p>
+
+{% if campo %}
+    {% for estado, datos in campo['estado'].items() %}
+        <h3 style="color: #FFFFFF; font-size:x-large;">{{ estado }}</h3>
+            <div class="right" style="background-color: black;">
+                <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
+                <p style="color: #FFFFFF;">{{ datos['ubicacion'] }}</p> 
+            
+                <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación especifica</h1>
+                <p style="color: #FFFFFF;">{{ datos['ubicacionespecifica'] }}</p> 
+            
+                <h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
+                <p style="color: #FFFFFF;">{{ datos['stock'] }}</p> 
+            </div>
+    {% endfor %}
+{% endif %}
+
+
+
+``
 
 <a href="/eliminar_producto/{{ key }}" onclick="return confirm('¿Seguro deseas eliminar?')"> 
     <button class="btn btn-danger">
         Eliminar
     </button>
 </a>
+
+</div>
+
+<script>
+    const inputsContainer = document.querySelector('#inputs-container');
+    for (const [key, value] of Object.entries(oems)) {
+    // Crear un fieldset para cada oem
+    const fieldset = document.createElement('fieldset');
+    fieldset.className = 'myfieldset';
+
+    // Crear un label para el código general
+    const label = document.createElement('label');
+    label.textContent = 'Código general';
+    fieldset.appendChild(label);
+
+    // Crear un input para el código general
+    const inputCodigoGeneral = document.createElement('input');
+    inputCodigoGeneral.type = 'text';
+    inputCodigoGeneral.name = key;
+    inputCodigoGeneral.value = value[0];
+    fieldset.appendChild(inputCodigoGeneral);
+
+    // Crear un label para los subcódigos
+    const labelSubcodigos = document.createElement('label');
+    labelSubcodigos.textContent = 'Subcódigos';
+    fieldset.appendChild(labelSubcodigos);
+
+    // Crear un input para cada subcódigo
+    for (let i = 1; i < value.length; i++) {
+        const inputSubcodigo = document.createElement('input');
+        inputSubcodigo.type = 'text';
+        inputSubcodigo.name = key;
+        inputSubcodigo.value = value[i];
+        fieldset.appendChild(inputSubcodigo);
+    }
+
+    // Agregar el fieldset al contenedor de inputs
+    inputsContainer.appendChild(fieldset);
+    }
+</script>
 
 {% endblock %}

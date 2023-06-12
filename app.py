@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
 from config import auth, fdb
 
@@ -209,10 +209,23 @@ def inventario():
   print(datos)
   return render_template("inventario.html", datos=datos)
 
+@app.route('/verificar_codigo', methods=['POST'])
+def verificar_codigo():
+    codigo = request.form['codigo'].upper()
+    datos = fdb.child("Inventario").get().val()
+    if datos is None:
+        codigos = []
+    else:
+        codigos = [d['codigo'] for d in datos.values()]
+    existe = codigo in codigos
+    return jsonify({'existe': existe})
+
 
 @app.route('/crear_producto/', methods=["GET", "POST"])
 @login_required
 def crear_producto():
+    datos = fdb.child("Sucursales").get().val()
+    nombres = [sucursal['nombre'] for sucursal in datos.values()]
     if request.method == "POST":
         codigo = request.form["codigo"].upper()
         descripcion = request.form["descripcion"].upper()
@@ -230,17 +243,25 @@ def crear_producto():
            referencia = "N/A"
         precio = float(request.form["precio"])
         precioiva = round(float(request.form["precio"])*1.12, 2)
-        ubicacion = request.form["ubicacion"].upper()
-        if ubicacion == "":
-           ubicacion = "N/A"
-        ubicacionespecifica = request.form["ubicacionespecifica"].upper()
-        if ubicacionespecifica == "":
-           ubicacionespecifica = "N/A"
-        stock = request.form["stock"]
+
+        inventario = {}
+        for nom in nombres:
+           ubicacion = request.form["ubicacion " + nom].upper()
+           if ubicacion == "":
+              ubicacion = "N/A"
+           ubicacionespecifica = request.form["ubicacionespecifica " + nom].upper()
+           if ubicacionespecifica == "":
+              ubicacionespecifica = "N/A"
+           stock = request.form["stock " + nom]
+           if stock == "":
+              stock = 0
+           else:
+              stock = int(request.form["stock " + nom])
+           inventario[nom] = {'ubicacion':ubicacion, 'ubicacionespecifica': ubicacionespecifica, 'stock':stock}
+        print(inventario)
 
         datos = fdb.child("Inventario").get().val()
         codigos = [""]
-        print(datos) #Devuelve none en caso de no tener datos
         if datos != None:
            codigos = [d['codigo'] for d in datos.values()]
 
@@ -256,58 +277,81 @@ def crear_producto():
             "referencia": referencia,
             "precio": precio,
             "precioiva": precioiva,
-            "ubicacion": ubicacion,
-            "ubicacionespecifica": ubicacionespecifica,
-            "stock": stock
+            "estado": inventario
         })
         return redirect(url_for('inventario'))
     else:
-       return render_template("agregar_inventario.html")
+       datos = fdb.child("Sucursales").get().val()
+       nombres = [sucursal['nombre'] for sucursal in datos.values()]
+
+       return render_template("agregar_inventario.html", nombres=nombres)
 
 @app.route('/detalles_producto/<string:key>')
 @login_required
 def detalles_producto(key):
+    print(key)
     campo = fdb.child('Inventario').child(key).get().val()
-    return render_template('detalles_inventario.html', key=key, campo=campo)
+    datos = fdb.child("Sucursales").get().val()
+    nombres = [sucursal['nombre'] for sucursal in datos.values()]
+    return render_template('detalles_inventario.html', key=key, campo=campo, nombres=nombres)
 
 @app.route('/actualizar_producto/<string:key>', methods=["GET", "POST"])
 @login_required
 def actualizar_producto(key):
   campo = fdb.child("Inventario").child(key).get().val()
+  datos = fdb.child("Sucursales").get().val()
+  nombres = [sucursal['nombre'] for sucursal in datos.values()]
   if request.method == "POST":
-    descripcion = request.form["descripcion"]
-    oems = request.form["oems"]
-    if oems == "":
-        oems = "N/A"
-    marca = request.form["marca"]
-    referencia = request.form["referencia"]
-    if referencia == "":
-        referencia = "N/A"
-    precio = float(request.form["precio"])
-    precioiva = round(float(request.form["precio"])*1.12, 2)
-    ubicacion = request.form["ubicacion"]
-    if ubicacion == "":
-        ubicacion = "N/A"
-    ubicacionespecifica = request.form["ubicacionespecifica"]
-    if ubicacionespecifica == "":
-        ubicacionespecifica = "N/A"
-    stock = request.form["stock"]
-    fdb.child("Inventario").child(key).update({
-            "codigo": campo['codigo'] ,
-            "descripcion": descripcion,
-            "oems": oems,
-            "marca": marca,
-            "referencia": referencia,
-            "precio": precio,
-            "precioiva": precioiva,
-            "ubicacion": ubicacion,
-            "ubicacionespecifica": ubicacionespecifica,
-            "stock": stock
-        })
-    flash("El producto se ha sido modificado con éxito")
-    return redirect(url_for('detalles_producto', key=key))
+      print(key)
+      codigo = campo["codigo"]
+      descripcion = request.form["descripcion"].upper()
+      data = {}
+      for code in request.form.keys():
+          if code.startswith('oem'):
+            data[code] = [x.upper() for x in request.form.getlist(code)]
+
+      oems = data
+      if oems == "":
+          oems = "N/A"
+      marca = request.form["marca"].upper()
+      referencia = request.form["referencia"].upper()
+      if referencia == "":
+          referencia = "N/A"
+      precio = float(request.form["precio"])
+      precioiva = round(float(request.form["precio"])*1.12, 2)
+
+      inventario = {}
+      for nom in nombres:
+          ubicacion = request.form["ubicacion " + nom].upper()
+          if ubicacion == "":
+            ubicacion = "N/A"
+          ubicacionespecifica = request.form["ubicacionespecifica " + nom].upper()
+          if ubicacionespecifica == "":
+            ubicacionespecifica = "N/A"
+          stock = request.form["stock " + nom]
+          if stock == "":
+            stock = 0
+          else:
+            stock = int(request.form["stock " + nom])
+          inventario[nom] = {'ubicacion':ubicacion, 'ubicacionespecifica': ubicacionespecifica, 'stock':stock}
+      print(inventario)
+      fdb.child("Inventario").child(key).update({
+        "codigo": codigo,
+        "descripcion": descripcion,
+        "oems": oems,
+        "marca": marca,
+        "referencia": referencia,
+        "precio": precio,
+        "precioiva": precioiva,
+        "estado": inventario
+      })
+      flash("El producto se ha sido modificado con éxito")
+      return redirect(url_for('detalles_producto', key=key))
   else:
-    return render_template('actualizar_inventario.html', key=key, campo=campo)
+      datos = fdb.child("Sucursales").get().val()
+      nombres = [sucursal['nombre'] for sucursal in datos.values()]
+      print(key)
+      return render_template('actualizar_inventario.html', key=key, campo=campo, nombres=nombres)
 
 @app.route('/eliminar_producto/<string:key>')
 @login_required
