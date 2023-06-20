@@ -205,9 +205,11 @@ def actualizar_usuarios(key):
 @app.route("/inventario/")
 @login_required
 def inventario():
+  sucursales = fdb.child("Sucursales").get().val()
+  nombres = [sucursal['nombre'] for sucursal in sucursales.values()]
   datos = fdb.child("Inventario").get().val()
   print(datos)
-  return render_template("inventario.html", datos=datos)
+  return render_template("inventario.html", datos=datos, nombres=nombres)
 
 @app.route('/verificar_codigo', methods=['POST'])
 def verificar_codigo():
@@ -359,6 +361,71 @@ def eliminar_producto(key):
     fdb.child("Inventario").child(key).remove()
     flash("El producto se ha sido eliminado con éxito")
     return redirect(url_for('inventario'))
+
+
+#-----------------------------------------SALIDAS POR VENTAS-----------------------------------------------------
+@app.route("/salidas/", methods=['GET', 'POST'])
+@login_required
+def salidas():
+    datos = fdb.child("Sucursales").get().val()
+    nombres = [sucursal['nombre'] for sucursal in datos.values()]
+    
+    if request.method == 'POST':
+        sucursal_seleccionada = request.form['sucursal']
+        # Obtener los datos de ventas de la sucursal seleccionada según tu lógica
+        ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
+    else:
+       sucursal_seleccionada = "9 de Octubre"
+       ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
+       print(ventas)
+       return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
+
+@app.route('/crear_salida/<string:sucursal_seleccionada>', methods=['GET', 'POST'])
+@login_required
+def crear_salida(sucursal_seleccionada):
+    if request.method == 'POST':
+      documento = request.form["documento"].upper()
+      fecha = request.form["fecha"]
+
+      sucursal = request.form.get('sucursal', 'N/A').upper()
+      
+      cliente = request.form.get('cliente', 'N/A').upper()
+
+      tipo_pago = request.form["tipo_pago"].upper()
+
+
+
+      fdb.child("Salidas").child(sucursal_seleccionada).push({
+        "documento": documento,
+        "fecha": fecha,
+        "cliente": cliente,
+        "sucursal": sucursal,
+        "tipo_pago": tipo_pago
+      })
+      flash("La salida se ha creado")
+      return redirect(url_for('salidas'))
+    
+    else:
+      datos = fdb.child("Sucursales").get().val()
+      nombres = [sucursal_seleccionada['nombre'] for sucursal_seleccionada in datos.values()]
+      productos_con_stock = {}
+      datos = fdb.child("Inventario").get().val()
+      for producto in datos.values():
+          sucursal_info = producto["estado"]
+          estado = sucursal_info[sucursal_seleccionada]
+          stock = estado["stock"]
+          if stock > 0:
+            oems=[]
+            for data in producto['oems'].values():
+              for x in range (1, len(data)):
+                oems.append(str(data[0]) + str(data[x]))
+            productos_con_stock[producto["codigo"]] = [oems, producto["descripcion"], stock, producto["precio"]]
+        
+          print(productos_con_stock)
+        
+      return render_template("agregar_salidas.html", productos=productos_con_stock, nombres=nombres, sucursal_seleccionada=sucursal_seleccionada)
+
 
   
 

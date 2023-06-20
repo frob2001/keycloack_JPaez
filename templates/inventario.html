@@ -153,7 +153,11 @@
             <th class="header">Marca</th>
             <th class="header">Referencia</th>
             <th class="header">Precio(IVA)</th>
-            <th class="header">Stock</th>
+            {% if nombres %}
+                {% for nom in nombres %}
+                    <th class="header">{{ nom }}</th>
+                {% endfor %}
+            {% endif %}
             <th><h2>Detalles</h2></th>
         </tr>
     </thead>
@@ -175,7 +179,14 @@
                 <td class="data">{{ value['marca'] }}</td>
                 <td class="data">{{ value['referencia'] }}</td>
                 <td class="data">{{ value['precioiva'] }}</td>
-                <td class="data">{{ value['stock'] }}</td>
+                {% if nombres %}
+                    {% for nom in nombres %}
+                        {% set sucursal_info = value['estado'] %}
+                        {% set estado = sucursal_info[nom] %}
+                        {% set stock = estado["stock"] %}
+                        <td class="data">{{ stock }}</td>
+                    {% endfor %}
+                {% endif %}
                 <td style="width:25px">
                     <a href="/detalles_producto/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
                 </td>

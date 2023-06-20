@@ -100,22 +100,23 @@
         {% if not loop.first %}
             <button type="button" class="btn-danger" style="height: 30px; width: 80%; display: flex; align-items: center; justify-content: center;" onclick="eliminarSubProducto(this)"><i class="fas fa-trash"></i></button>
         {% endif %}
+        {% set count = loop.index0%}
         <div class="inputs">
-            <input type="text" name="oem0" class="form-control oem" placeholder="Código" value="{{ data[0] }}">
-            {% for x in range (1, data|length) %}
+            <input type="text" name="oem{{ count }}" class="form-control oem" placeholder="Código" value="{{ data[0] }}">
+            {% for x in range(1, data|length) %}
                 {% if x == 1 %}
-                    <input type="text" name="oem0" class="form-control oem" placeholder="Subcódigo" value="{{ data[x] }}">
+                    <input type="text" name="oem{{ count }}" class="form-control oem" placeholder="Subcódigo" value="{{ data[x] }}">
                 {% else %}
-                <div class="subproductos" style="display:flex; width: 80%; align-items: center;">
-                    <input type="text" class="form-control oem" name="oem0" placeholder="Subcódigo" value="{{ data[x] }}"> 
-                    <button type="button" class="btn-danger" style="height: 30px; width: 30px; margin-left: auto; border-radius: 20%; display: flex; align-items: center; justify-content: center;" onclick="eliminarSubProducto(this)"><i class="fas fa-trash"></i></button>
-                </div>
+                    <div class="subproductos" style="display:flex; width: 80%; align-items: center;">
+                        <input type="text" class="form-control oem" name="oem{{ count }}" placeholder="Subcódigo" value="{{ data[x] }}"> 
+                        <button type="button" class="btn-danger" style="height: 30px; width: 30px; margin-left: auto; border-radius: 20%; display: flex; align-items: center; justify-content: center;" onclick="eliminarSubProducto(this)"><i class="fas fa-trash"></i></button>
+                    </div>
                 {% endif %}    
             {% endfor %}
         </div>
         <button type="button" class="btn btn-lightGray mt-1" style="width: 80%;" onclick="agregarSubProducto(this)">Agregar subproducto</button>
     </fieldset>  
-    {% endfor %}
+{% endfor %}
     <button type="button" class="agregarbutton btn btn-lightGray mt-4" onclick="agregarProducto()">Agregar producto</button>
     <br>
 
@@ -155,7 +156,7 @@
 </body>
 
 <script>
-    let contador = 1;
+    let contador = {{ campo['oems']|length }};
 
     function agregarSubProducto(btn) {
         var div = document.createElement("div");
