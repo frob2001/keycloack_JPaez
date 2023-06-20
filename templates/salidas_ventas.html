@@ -63,6 +63,31 @@
         background-color: #494949;
         border-color: #494949;          
     }
+
+    .dropdown{
+        width:auto;
+    }
+    form {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group {
+        margin-right: 10px;
+    }
+
+    .form-group label {
+        margin-right: 5px;
+    }
+
+    .form-group select {
+        margin-right: 5px;
+    }
+
+    .form-group .btn-primary {
+        margin-left: 10px;
+    }
+
     table {
         width: 100%;
     }
@@ -138,16 +163,17 @@
 
 <form action="{{ url_for('salidas') }}" method="POST">
     <div class="form-group">
-        <label for="sucursal">Seleccionar sucursal:</label>
-        <select class="form-control" id="sucursal" name="sucursal">
-        {% if nombres %}
-            {% for nombre in nombres %}
-                <option value="{{ nombre }}" {% if sucursal_seleccionada == nombre %}selected{% endif %}>{{ nombre }}</option>
-            {% endfor %}
-        {% endif %}
-        </select>        
+        <select class="form-control dropdown" id="sucursal" name="sucursal">
+            {% if nombres %}
+                {% for nombre in nombres %}
+                    <option value="{{ nombre }}" {% if sucursal_seleccionada == nombre %}selected{% endif %}>{{ nombre }}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
     </div>
-    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
 </form>
 
 <div class="col-sm-12 col-md-6" id="createbutton">
