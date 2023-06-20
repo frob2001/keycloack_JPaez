@@ -391,6 +391,19 @@
 
   }
 
+  function aplicarDescuento() {
+    var descuentoInput = document.getElementById("descuento");
+    var descuento = parseInt(descuentoInput.value);
+  
+    // Verificar si se ingresó un descuento válido
+    if (!isNaN(descuento) && descuento >= 0) {
+      var descuentoPorcentaje = descuento / 100;
+      var descuentoValor = totalGeneral * descuentoPorcentaje;
+  
+      var totalConDescuento = totalGeneral - descuentoValor;
+      document.getElementById("totalgeneral").textContent = "Total: " + totalConDescuento.toFixed(2);
+    }
+  }
 
   $(document).ready(function() {
     $('#example').DataTable({
@@ -462,7 +475,8 @@
     <div class="totaldiv" style="justify-content: center;">
       <p id="totalgeneral" style="margin-bottom: 0px;">Total: 0.00</p>
       <div style="display: flex; align-items: center; margin-left: auto;">
-        <input type="number" style="width: auto-20px; margin-left: 20px;" class="form-control documento" id="documento" name="documento" pattern="^(100|[1-9]?[0-9])$" title="Número del 0 al 100" required> 
+        <input type="number" style="width: auto-20px; margin-left: 20px;" class="form-control documento" id="descuento" name="descuento" pattern="^(100|[1-9]?[0-9])$" title="Número del 0 al 100" required oninput="aplicarDescuento()">
+ 
         <p style="margin-left: 5px; margin-bottom: 0px;">%</p>
       </div>
     </div>
