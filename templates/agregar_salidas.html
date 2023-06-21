@@ -242,70 +242,108 @@
   }
 
   function guardarCambios() {
-      // Obtener el producto seleccionado
+    // Obtener el producto seleccionado
     var productoSeleccionado = document.getElementById("seleccionado").textContent;
     console.log(productoSeleccionado);
-
+  
     // Obtener la cantidad ingresada
     var cantidad = document.getElementById("cantidad").value;
     console.log(cantidad);
-
+  
     if (productoSeleccionado.trim() === "") {
       alert('Debes seleccionar un producto');
       return false;
     }
-
+  
     if (cantidad.trim() === "" || cantidad <= 0) {
       alert('Debes ingresar una cantidad');
       return false;
     }
-    
+  
     // Obtener la fila correspondiente al producto seleccionado en la tabla
     var filaProducto = document.querySelector('input[name="producto_radio"][value="' + productoSeleccionado.split(':')[0].trim() + '"]').parentNode.parentNode;
-
+  
     // Obtener el valor actual del stock del producto en la tabla
     var stockActual = parseInt(filaProducto.cells[5].textContent);
-
+  
     // Restar la cantidad ingresada al stock actual
     var stockDespuesResta = stockActual - parseInt(cantidad);
-
+  
     if (stockDespuesResta < 0) {
       alert('No puedes ingresar una cantidad mayor al stock disponible');
       return false;
     }
-
+  
     // Actualizar el valor del stock en la tabla
     filaProducto.cells[5].textContent = stockDespuesResta;
-
+  
     // Resaltar el nuevo valor del stock en color rojo
     filaProducto.cells[5].style.color = 'red';
-
+  
     var precio = parseFloat(filaProducto.cells[4].textContent);
   
     // Crear un nuevo div para mostrar el producto añadido
     var nuevoDiv = document.createElement("div");
-
+  
     // Crear un elemento <p> para el producto seleccionado
     var pProductoSeleccionado = document.createElement("p");
+    pProductoSeleccionado.id = "productocodigo";
+    pProductoSeleccionado.name = "productocodigo";
     var contenidoProductoSeleccionado = document.createTextNode(productoSeleccionado);
     pProductoSeleccionado.appendChild(contenidoProductoSeleccionado);
-    
+    nuevoDiv.appendChild(pProductoSeleccionado);
+  
+    // Crear un elemento <input> para el nombre del producto (oculto)
+    var inputProductoSeleccionado = document.createElement("input");
+    inputProductoSeleccionado.type = "hidden";
+    inputProductoSeleccionado.name = "productocodigo";
+    inputProductoSeleccionado.value = productoSeleccionado;
+    nuevoDiv.appendChild(inputProductoSeleccionado);
+  
     // Crear un elemento <p> para la cantidad
     var pCantidad = document.createElement("p");
+    pCantidad.id = "cantidadproducto";
+    pCantidad.name = "cantidadproducto";
     var contenidoCantidad = document.createTextNode("Cantidad: " + cantidad);
     pCantidad.appendChild(contenidoCantidad);
-
+    nuevoDiv.appendChild(pCantidad);
+  
+    // Crear un elemento <input> para la cantidad (oculto)
+    var inputCantidad = document.createElement("input");
+    inputCantidad.type = "hidden";
+    inputCantidad.name = "cantidadproducto";
+    inputCantidad.value = cantidad;
+    nuevoDiv.appendChild(inputCantidad);
+  
     // Crear un elemento <p> para el precio
     var pPrecio = document.createElement("p");
+    pPrecio.id = "precioproducto";
+    pPrecio.name = "precioproducto";
     var contenidoPrecio = document.createTextNode("Precio: " + precio);
     pPrecio.appendChild(contenidoPrecio);
+    nuevoDiv.appendChild(pPrecio);
 
+    var inputPrecio= document.createElement("input");
+    inputPrecio.type = "hidden";
+    inputPrecio.name = "precioproducto";
+    inputPrecio.value = precio;
+    nuevoDiv.appendChild(inputPrecio);
+  
     // Crear un elemento <p> para el total
     var pTotal = document.createElement("p");
     pTotal.id = "total";
+    pTotal.name = "total";
     var contenidoTotal = document.createTextNode("Total: " + (precio * cantidad).toFixed(2));
     pTotal.appendChild(contenidoTotal);
-
+    nuevoDiv.appendChild(pTotal);
+  
+    // Crear un elemento <input> para el total (oculto)
+    var inputTotal = document.createElement("input");
+    inputTotal.type = "hidden";
+    inputTotal.name = "total";
+    inputTotal.value = (precio * cantidad).toFixed(2);
+    nuevoDiv.appendChild(inputTotal);
+  
     //LISTENER
     pTotal.addEventListener("DOMSubtreeModified", actualizarTotalGeneral);
   
@@ -314,14 +352,14 @@
     nuevoDiv.appendChild(pCantidad);
     nuevoDiv.appendChild(pPrecio);
     nuevoDiv.appendChild(pTotal);
-    
+  
     // Agregar una clase al nuevo div para estilizarlo si es necesario
     nuevoDiv.className = "producto-agregado";
-    
+  
     // Agregar el nuevo div a la parte izquierda del HTML
     var contenedorIzquierdo = document.getElementsByClassName("left")[0];
     contenedorIzquierdo.appendChild(nuevoDiv);
-    
+  
     // Crear un botón para eliminar el div si es necesario
     var botonEliminar = document.createElement("button");
     botonEliminar.innerHTML = '<i class="fas fa-trash"></i>';
@@ -331,38 +369,34 @@
     botonEliminar.style.display = "flex";
     botonEliminar.style.alignItems = "center";
     botonEliminar.style.justifyContent = "center";
+  
     //FUNCION DE BOTON ELIMINAR
-    botonEliminar.onclick = function () {
-    contenedorIzquierdo.removeChild(nuevoDiv);
-
-    
-
-
-    console.log(cantidad);
-
-    var filaProducto = document.querySelector('input[name="producto_radio"][value="' + productoSeleccionado.split(':')[0].trim() + '"]').parentNode.parentNode;
-    console.log(filaProducto);
-    // Obtener el valor actual del stock del producto en la tabla
-    var stockActual = parseInt(filaProducto.cells[5].textContent);
-
-    // Restar la cantidad ingresada al stock actual
-    var stockDespuesSuma = stockActual + parseInt(cantidad);
-
-    // Actualizar el valor del stock en la tabla
-    filaProducto.cells[5].textContent = stockDespuesSuma;
-
-    // Resaltar el nuevo valor del stock en color rojo
-    filaProducto.cells[5].style.color = 'black';
-
-    eliminarElemento(nuevoDiv);
-
-
-
+    botonEliminar.onclick = function() {
+      contenedorIzquierdo.removeChild(nuevoDiv);
+  
+      var cantidadProducto = parseInt(inputCantidad.value);
+      var filaProducto = document.querySelector('input[name="producto_radio"][value="' + productoSeleccionado.split(':')[0].trim() + '"]').parentNode.parentNode;
+      console.log(filaProducto);
+      // Obtener el valor actual del stock del producto en la tabla
+      var stockActual = parseInt(filaProducto.cells[5].textContent);
+  
+      // Sumar la cantidad ingresada al stock actual
+      var stockDespuesSuma = stockActual + cantidadProducto;
+  
+      // Actualizar el valor del stock en la tabla
+      filaProducto.cells[5].textContent = stockDespuesSuma;
+  
+      // Resaltar el nuevo valor del stock en color negro
+      filaProducto.cells[5].style.color = 'black';
+  
+      eliminarElemento(nuevoDiv);
     };
+  
     // Agregar el botón de eliminar al nuevo div
     nuevoDiv.appendChild(botonEliminar);
     actualizarTotalGeneral();
   }
+  
 
   var totalGeneral = 0;
 
@@ -381,6 +415,7 @@
 
     // Actualizar el contenido del div con el id "totalgeneral"
     document.getElementById("totalgeneral").textContent = "Total: " + totalGeneral.toFixed(2);
+    document.querySelector("input[name='totalgeneral']").value = totalGeneral.toFixed(2);
   }
 
   function eliminarElemento(elemento) {
@@ -388,6 +423,7 @@
     var valorTotal = parseFloat(elemento.childNodes[3].textContent.split(':')[1].trim());
     totalGeneral -= valorTotal;
     document.getElementById("totalgeneral").textContent = "Total: " + totalGeneral.toFixed(2);
+    document.querySelector("input[name='totalgeneral']").value = totalGeneral.toFixed(2);
 
   }
 
@@ -402,6 +438,7 @@
   
       var totalConDescuento = totalGeneral - descuentoValor;
       document.getElementById("totalgeneral").textContent = "Total: " + totalConDescuento.toFixed(2);
+      document.querySelector("input[name='totalgeneral']").value = totalConDescuento.toFixed(2);
     }
   }
 
@@ -473,7 +510,9 @@
     </button>
 
     <div class="totaldiv" style="justify-content: center;">
-      <p id="totalgeneral" style="margin-bottom: 0px;">Total: 0.00</p>
+      <p id="totalgeneral" name="totalgeneral" style="margin-bottom: 0px;">Total: 0.00</p>
+      <input type="hidden" name="totalgeneral" value="0.00">
+
       <div style="display: flex; align-items: center; margin-left: auto;">
         <input type="number" style="width: auto-20px; margin-left: 20px;" class="form-control documento" id="descuento" name="descuento" pattern="^(100|[1-9]?[0-9])$" title="Número del 0 al 100" required oninput="aplicarDescuento()">
  

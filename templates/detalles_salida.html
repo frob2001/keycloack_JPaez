@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Detalle salida {% endblock %}
+
+
+{% block body %}
+
+    <style>
+
+        .btn-lightGray
+        {
+            
+            cursor: pointer;
+            outline: 0;
+            color: #FFFFFF;
+            background-color: #787878;
+            border-color: #787878;
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: center;
+            border: 1px solid transparent;
+            padding: 6px 12px;
+            font-size: 16px;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
+        }
+
+        .btn-lightGray:hover {
+            color: #fff;
+            background-color: #494949;
+            border-color: #494949;          
+        }
+
+    
+        
+    /*Izq der*/
+
+        .details {
+            width: 80%;
+            margin: 0 auto;
+        }
+            
+        .left, .right {
+          width: 50%;
+        }
+        
+        .left {
+          float: left;
+        }
+        
+        .right {
+          margin-bottom: 20px;
+          float: right;
+          border-radius: 5px;
+          padding: 15px;
+        }
+        
+        h1, p {
+          width: 80%;
+        }
+    
+        .right h1, p {
+          width: 100%;
+        }
+        .right h1, p {
+          width: 100%;
+        }
+
+        table {
+            width: 100%;
+        }
+        
+        tbody{
+            background-color: white;
+        }
+        th{
+            text-align: center;
+        }
+        thead{
+            background: black;
+            color: white;
+        }
+        td {
+            text-align: center;
+        }
+        h2, .h2{
+            margin: 0;
+            font-size: 100%;
+        }
+        table.table-bordered{
+            border:1px solid black;
+        }
+        table.table-bordered > thead > tr > th{
+            border:1px solid black;
+        }
+        table.table-bordered > tbody > tr > td{
+            border:1px solid black;
+        }
+        
+        @media (max-width: 600px) {
+          .left, .right {
+            width: 100%;
+            float: none;
+          }
+        }
+    </style>
+
+    <div style="margin-bottom: 10px;">
+        <h1 class="text-light">{{ salida['documento'] }}</h1>
+    </div>
+    
+    <br>
+    
+    <div class="details"> 
+    
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-dark" role="alert">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="left">
+    
+    <h1 style="color: #FFFFFF; font-size:x-large;">Total</h1>
+    <p style="color: #FFFFFF;">{{ salida['total'] }}</p>
+    
+    <h1 style="color: #FFFFFF; font-size:x-large;">Descuento</h1>
+    <p style="color: #FFFFFF;">{{ salida['descuento'] }}%</p>
+    
+    <h1 style="color: #FFFFFF; font-size:x-large;">Fecha</h1>
+    <p style="color: #FFFFFF;">{{ salida['fecha'] }}</p>
+
+    <h1 style="color: #FFFFFF; font-size:x-large;">Cliente</h1>
+    <p style="color: #FFFFFF;">{{ salida['cliente'] }}</p>
+
+    <h1 style="color: #FFFFFF; font-size:x-large;">Sucursal</h1>
+    <p style="color: #FFFFFF;">{{ salida['sucursal'] }}</p>
+    
+    
+    </div>
+
+    <table class="table table-striped table-bordered" id="example">
+        <thead>
+          <tr>
+            <th>Código Producto</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for index in range(salida['productos']|length) %}
+          <tr>
+            <td>{{ salida['productos'][index] }}</td>
+            <td>{{ salida['cantidades'][index] }}</td>
+            <td>{{ salida['precio'][index] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    
+    <a href="/eliminar_salida/{{ sucursal_seleccionada }}//{{ key }}" onclick="return confirm('¿Seguro deseas eliminar?')"> 
+        <button class="btn btn-danger">
+            Eliminar
+        </button>
+    </a>
+
+<script>
+    $(document).ready(function() {
+        $('#example').DataTable({
+            "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "search": "Buscar:",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+            },
+            "columnDefs": [
+            { "searchable": false, "orderable": false, "targets": 0 },
+            { "searchable": true, "orderable": true, "targets": 1 },
+            { "searchable": true, "orderable": true, "targets": 2 },
+            { "searchable": true, "orderable": true, "targets": 3 },
+            { "searchable": true, "orderable": true, "targets": 4 }
+            ],
+            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+            "scrollX": true,
+            "scrollY": "200px",
+            "scrollCollapse": true,
+            "paging": false,
+            dom: "<'row'<'col-sm-12 col-md-6 my-2' fB><'col-sm-12 col-md-6'>>" +
+            "<tr>" +
+            "<'row'<'col-sm-12 col-md-5'ilp><'col-sm-12 col-md-7 my-2 text-right'>>"
+        });
+    });
+</script>
+
+
+
+{% endblock %}

@@ -206,7 +206,7 @@
                                 {{ producto }}<br>
                             {% endfor %}
                         </td>
-                        <td class="data">{{ venta['precio'] }}</td>
+                        <td class="data">{{ venta['total'] }}</td>
                         <td class="data">{{ venta['tipo_pago'] }}</td>
 
                         <td class="data">
@@ -217,7 +217,7 @@
                         {% endif %}
                         </td>
                         <td>
-                            <a href="/detalles/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                            <a href="/detalles_salida/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
                         </td>
                     </tr>
                 {% endfor %}

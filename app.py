@@ -394,6 +394,38 @@ def crear_salida(sucursal_seleccionada):
 
       tipo_pago = request.form["tipo_pago"].upper()
 
+      total = request.form["totalgeneral"].upper()
+
+      productos = request.form.getlist("productocodigo")
+
+      cantidades = request.form.getlist("cantidadproducto")
+
+      precios = request.form.getlist("precioproducto")
+
+      descuento = int(request.form["descuento"])
+
+      print(documento, fecha, cliente, sucursal, tipo_pago, total, descuento, productos, cantidades)
+
+      for i, producto in enumerate(productos):
+          if ":" in producto:
+              producto_info = producto.split(":")
+              producto_codigo = producto_info[0].strip()  # Obtener el código del producto sin espacios adicionales
+          else:
+              producto_codigo = producto.strip()  # Utilizar el nombre completo del producto como código
+
+          cantidad = int(cantidades[i])
+
+          inventario = fdb.child("Inventario").get().val()
+
+          for producto_key, producto_data in inventario.items():
+              if producto_data["codigo"] == producto_codigo:
+                  estado = producto_data["estado"]
+                  if sucursal_seleccionada in estado:
+                      stock_actual = estado[sucursal_seleccionada]["stock"]
+                      nuevo_stock = stock_actual - cantidad
+                      estado[sucursal_seleccionada]["stock"] = nuevo_stock
+                      fdb.child("Inventario").child(producto_key).child("estado").set(estado)
+
 
 
       fdb.child("Salidas").child(sucursal_seleccionada).push({
@@ -401,7 +433,12 @@ def crear_salida(sucursal_seleccionada):
         "fecha": fecha,
         "cliente": cliente,
         "sucursal": sucursal,
-        "tipo_pago": tipo_pago
+        "tipo_pago": tipo_pago,
+        "productos": productos,
+        "cantidades": cantidades,
+        "precio": precios,
+        "total": total,
+        "descuento": descuento
       })
       flash("La salida se ha creado")
       return redirect(url_for('salidas'))
@@ -426,7 +463,13 @@ def crear_salida(sucursal_seleccionada):
         
       return render_template("agregar_salidas.html", productos=productos_con_stock, nombres=nombres, sucursal_seleccionada=sucursal_seleccionada)
 
-
+@app.route('/detalles_salida/<string:sucursal_seleccionada>/<string:key>', methods=['GET', 'POST'])
+@login_required
+def detalles_salida(sucursal_seleccionada, key):
+    salida = fdb.child('Salidas').child(sucursal_seleccionada).child(key).get().val()
+    print(salida)
+    return render_template('detalles_salida.html', key=key, salida=salida)
+   
   
 
 if __name__ == "__main__":
