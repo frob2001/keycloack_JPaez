@@ -468,9 +468,89 @@ def crear_salida(sucursal_seleccionada):
 def detalles_salida(sucursal_seleccionada, key):
     salida = fdb.child('Salidas').child(sucursal_seleccionada).child(key).get().val()
     print(salida)
-    return render_template('detalles_salida.html', key=key, salida=salida)
+    return render_template('detalles_salida.html', key=key, salida=salida, sucursal_seleccionada=sucursal_seleccionada)
    
+@app.route('/eliminar_salida/<string:sucursal_seleccionada>/<string:key>')
+@login_required
+def eliminar_salida(sucursal_seleccionada, key):
+    llave = key
+    salida = fdb.child('Salidas').child(sucursal_seleccionada).child(llave).get().val()
+    inventario = fdb.child('Inventario').get().val()
+
+    productos = salida['productos']
+    cantidades = salida['cantidades']
+
+    for i in range(len(productos)):
+        producto_codigo = productos[i].split(':')[0]
+        cantidad = int(cantidades[i])
+
+        for key, producto in inventario.items():
+            if producto['codigo'] == producto_codigo:
+                producto['estado'][sucursal_seleccionada]['stock'] += cantidad
+                break
+
+    fdb.child('Inventario').set(inventario)
+    fdb.child('Salidas').child(sucursal_seleccionada).child(llave).remove()
+
+    flash("El producto se ha sido eliminado con éxito")
+    return redirect(url_for('salidas'))
   
+
+#-----------------------------------------ANALISIS ABC CORE-----------------------------------------------------
+
+@app.route('/abc_analisis/')
+@login_required
+def abc_analysis():
+    # Obtener los datos de Firebase
+    inventario = fdb.child("Inventario").get()
+
+    # Multiplicamos el stock por el precio para obtener el valor de los diferentes articulos en inventario
+    inventory_data = {}
+    for item in inventario.each():
+        item_data = item.val()
+        inventory_data[item_data['codigo']] = item_data['precio'] * item_data['estado']['9 de Octubre']['stock']
+
+    # Realizamos el análisis ABC
+    # Realizamos una sumatoria del total del costo del inventario
+    total_value = sum(inventory_data.values())
+    #Ordenamos los datos de manera descendente, lo usaremos en el grafico de valor de producto
+    inventory_items = sorted(inventory_data.items(), key=lambda x: x[1], reverse=True)
+
+    # Segun la formula del análsiis ABC para determinar en qué rango de porcentaje del valor acumulativo total se encuentra se usa lo siguiente:
+    cumulative_value = 0
+    abc_analysis = {}
+    for item, value in inventory_items:
+        cumulative_value += value
+        if cumulative_value / total_value <= 0.8:
+            abc_analysis[item] = 'A'
+        elif cumulative_value / total_value <= 0.95:
+            abc_analysis[item] = 'B'
+        else:
+            abc_analysis[item] = 'C'
+
+    #Valores acumulados para grafica de tendencia
+    cumulative_values = [sum([value for item, value in inventory_items][:i+1]) for i in range(len(inventory_items))]
+    result = list(zip(range(len(inventory_data)), cumulative_values))
+
+    category_start = 0
+
+    #Envio los detalles de las secciones del grafico de tendencia
+    rectangles = []
+    for i in range(1, len(inventory_items)):
+        if abc_analysis[inventory_items[i][0]] != abc_analysis[inventory_items[i-1][0]]:
+            bottom_left = (category_start-0.4, cumulative_values[category_start])
+            top_right = (i+0.4, cumulative_values[i-1])
+            rectangles.append((bottom_left, top_right))
+            category_start = i
+    bottom_left = (category_start-0.4, cumulative_values[category_start])
+    top_right = (len(inventory_items)-0.6, cumulative_values[-1])
+    rectangles.append((bottom_left, top_right))
+
+    print(abc_analysis)
+
+
+    return render_template('abc.html', inventory_items=inventory_items, result=result, rectangles=rectangles, abc_analysis=abc_analysis)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

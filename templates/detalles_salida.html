@@ -109,6 +109,9 @@
 
     <div style="margin-bottom: 10px;">
         <h1 class="text-light">{{ salida['documento'] }}</h1>
+        <a href="{{ url_for('salidas') }}"> 
+            <button class="btn btn-lightGray">Cancelar</button>
+        </a>
     </div>
     
     <br>
@@ -165,7 +168,7 @@
         </tbody>
       </table>
     
-    <a href="/eliminar_salida/{{ sucursal_seleccionada }}//{{ key }}" onclick="return confirm('¿Seguro deseas eliminar?')"> 
+    <a href="/eliminar_salida/{{ sucursal_seleccionada }}/{{ key }}" onclick="return confirm('¿Seguro deseas eliminar? *Los stocks de cada producto se sumarán*')"> 
         <button class="btn btn-danger">
             Eliminar
         </button>

@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Análisis ABC {% endblock %}
+
+
+{% block body %}
+
+<style>
+    .grafico{
+        width: 90%;
+        background-color: white;
+    }
+
+  .dt-button{
+      cursor: pointer;
+      outline: 0;
+      color: #FFFFFF;
+      background-color: #787878;
+      border-color: #787878;
+      display: inline-block;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: .25rem;
+      transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+  .download{
+      cursor: pointer;
+      outline: 0;
+      color: #FFFFFF;
+      background-color: #787878;
+      border-color: #787878;
+      display: inline-block;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: .25rem;
+      transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+  .btn-lightGray
+  {
+      
+      cursor: pointer;
+      outline: 0;
+      color: #FFFFFF;
+      background-color: #787878;
+      border-color: #787878;
+      display: inline-block;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: .25rem;
+      transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
+  }
+
+  .btn-lightGray:hover {
+      color: #fff;
+      background-color: #494949;
+      border-color: #494949;          
+  }
+  table {
+      width: 100%;
+  }
+  
+  tbody{
+      background-color: white;
+  }
+  th{
+      text-align: center;
+      padding: 8px;
+  }
+  thead{
+      background: black;
+      color: white;
+  }
+  td {
+      text-align: center;
+      padding: 8px;
+  }
+  h2, .h2{
+      margin: 0;
+      font-size: 100%;
+  }
+  table.table-bordered{
+      border:1px solid black;
+      margin-top:20px;
+  }
+  table.table-bordered > thead > tr > th{
+      border:1px solid black;
+  }
+  table.table-bordered > tbody > tr > td{
+      border:1px solid black;
+  }
+  @media (max-width: 767px) {
+      .only-table-wrapper {
+          overflow-x: auto;
+      }
+      h2, .h2{
+          font-size: 100%;
+      }
+      input{
+          height: 25px;
+      }
+      .grafico {
+        overflow-x: auto;
+    }
+  }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="{{ url_for('static', filename='js/table.js') }}"></script>
+
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+      <h1 class="text-light">Análisis ABC</h1>
+  </div>
+</div>
+
+<div class="tablediv">
+  <table class="table table-striped table-bordered" id="example2">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Clasificación</th>
+    </tr>
+      </thead>
+      <tbody>
+        {% for item, classification in abc_analysis.items() %}
+        <tr>
+            <td>{{ item }}</td>
+            <td>{{ classification }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+  </table>
+
+  <br>
+  <br>
+
+<h1 class="text-light">Gráfico de Barras</h1>
+<div class = "grafico">
+    <canvas id="barChart"></canvas>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.min.js"></script>
+
+
+<script>
+  var inventoryItems = {{ inventory_items | tojson }};
+  var labels = inventoryItems.map(function(item) {
+    return item[0];
+  });
+  var values = inventoryItems.map(function(item) {
+    return item[1];
+  });
+
+  var canvas = document.getElementById('barChart');
+  var barChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Valor acumulado',
+        data: values,
+        backgroundColor: 'rgba(0, 0, 0, 1)',
+        borderColor: 'rgba(0, 0, 0, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+
+<br>
+<br>
+
+<h1 class="text-light">Gráfico de tendencia</h1>
+<div class = "grafico">
+    <canvas id="tendecyChart"></canvas>
+</div>
+
+
+<script>
+  var inventoryItems = {{ result | tojson }};
+  var labels = inventoryItems.map(function(item) {
+    return item[0];
+  });
+  var values = inventoryItems.map(function(item) {
+    return item[1];
+  });
+  
+  var box = {{ rectangles | tojson }};
+  
+  const options = {
+    plugins: {
+      annotation: {
+        annotations: {
+          box1: {
+            type: 'box',
+            xMin: box[0][0][0],
+            xMax: box[0][1][0],
+            yMin: box[0][0][1],
+            yMax: box[0][1][1],
+            backgroundColor: 'rgba(125, 215, 217, 0.25)'
+          },
+          box2: {
+            type: 'box',
+            xMin: box[1][0][0],
+            xMax: box[1][1][0],
+            yMin: box[1][0][1],
+            yMax: box[1][1][1],
+            backgroundColor: 'rgba(255, 224, 0, 0.25)'
+          },
+          box3:{
+            type: 'box',
+            xMin: box[2][0][0],
+            xMax: box[2][1][0],
+            yMin: box[2][0][1],
+            yMax: box[2][1][1],
+            backgroundColor: 'rgba(255, 99, 132, 0.25)'
+          }
+        }
+      }
+    }
+  };
+  
+  const config = {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Tendencia',
+        data: values,
+        fill: false,
+        borderColor: 'rgb(0, 0, 0)',
+        tension: 0.1
+      }]
+    },
+    options: options
+  };
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('tendecyChart').getContext('2d');
+    new Chart(ctx, config);
+  });
+  
+</script>
+
+
+{% endblock %}
