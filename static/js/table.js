@@ -84,27 +84,6 @@ $(document).ready(function () {
             // Eliminar los botones de paginación no deseados
             pagination.find('.ellipsis').remove();
             pagination.find('a.paginate_button:not(.previous):not(.next):not(.current)').remove();
-
-            // Agregar el número de página "1", "2", "3" al inicio
-            var firstPageButton = $('<a>', {
-                href: '#',
-                'class': 'paginate_button btn btn-default',
-                'aria-controls': 'example',
-                'data-dt-idx': '0',
-                tabindex: '0'
-            }).text('1');
-            pagination.prepend(firstPageButton);
-
-            // Agregar el número de página final al final
-            var totalPages = Math.ceil(this.api().page.info().recordsTotal / this.api().page.len());
-            var lastPageButton = $('<a>', {
-                href: '#',
-                'class': 'paginate_button btn btn-default',
-                'aria-controls': 'example',
-                'data-dt-idx': totalPages - 1,
-                tabindex: '0'
-            }).text(totalPages);
-            pagination.append(lastPageButton);
         }
     });
     // DataTable
@@ -180,27 +159,6 @@ $(document).ready(function () {
             // Eliminar los botones de paginación no deseados
             pagination.find('.ellipsis').remove();
             pagination.find('a.paginate_button:not(.previous):not(.next):not(.current)').remove();
-
-            // Agregar el número de página "1", "2", "3" al inicio
-            var firstPageButton = $('<a>', {
-                href: '#',
-                'class': 'paginate_button btn btn-default',
-                'aria-controls': 'example',
-                'data-dt-idx': '0',
-                tabindex: '0'
-            }).text('1');
-            pagination.prepend(firstPageButton);
-
-            // Agregar el número de página final al final
-            var totalPages = Math.ceil(this.api().page.info().recordsTotal / this.api().page.len());
-            var lastPageButton = $('<a>', {
-                href: '#',
-                'class': 'paginate_button btn btn-default',
-                'aria-controls': 'example',
-                'data-dt-idx': totalPages - 1,
-                tabindex: '0'
-            }).text(totalPages);
-            pagination.append(lastPageButton);
         }
     });
     $('#example').addClass('only-table');
