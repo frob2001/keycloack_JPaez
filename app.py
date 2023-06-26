@@ -552,5 +552,26 @@ def abc_analysis():
     return render_template('abc.html', inventory_items=inventory_items, result=result, rectangles=rectangles, abc_analysis=abc_analysis)
 
 
+#-----------------------------------------Filttrado de salidas-----------------------------------------------------
+@app.route('/masvendido')
+def masvendido():
+    salidas = fdb.child("Salidas").get().val()
+
+    salidas_tumbaco = salidas['9 de Octubre']
+
+    filtdict = {}
+
+    for key in salidas_tumbaco:
+        documento = salidas_tumbaco[key]['documento']
+        fecha = salidas_tumbaco[key]['fecha']
+        productos = salidas_tumbaco[key]['productos']
+        cantidades = salidas_tumbaco[key]['cantidades']
+        filtdict[key] = {'documento': documento, 'fecha': fecha, 'productos': productos, 'cantidades': cantidades}
+
+    print(filtdict)
+
+    return render_template('filtrarsalida.html', filtdict=filtdict)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
