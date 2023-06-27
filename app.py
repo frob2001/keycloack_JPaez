@@ -494,7 +494,126 @@ def eliminar_salida(sucursal_seleccionada, key):
 
     flash("El producto se ha sido eliminado con éxito")
     return redirect(url_for('salidas'))
+
+#-----------------------------------------ENTRADAS POR COMPRAS--------------------------------------------------
   
+@app.route("/entradas_compras/", methods=['GET', 'POST'])
+@login_required
+def entradas_compras():
+    compras = fdb.child("Entradas_Compras").get().val()
+    print(compras)
+    return render_template("entradas_compras.html", compras=compras)
+
+@app.route('/crear_producto_compras/', methods=["GET", "POST"])
+@login_required
+def crear_producto_compras():
+    datos = fdb.child("Sucursales").get().val()
+    nombres = [sucursal['nombre'] for sucursal in datos.values()]
+    if request.method == "POST":
+        documento = request.form["documento"].upper()
+        fecha = request.form["fecha"]
+        tipo_compra = request.form['radio'].upper()
+        codigo = request.form["codigo"].upper()
+        descripcion = request.form["descripcion"].upper()
+        data = {}
+        for key in request.form.keys():
+           if key.startswith('oem'):
+              data[key] = [x.upper() for x in request.form.getlist(key)]
+
+        oems = data
+        if oems == "":
+           oems = "N/A"
+        marca = request.form["marca"].upper()
+        referencia = request.form["referencia"].upper()
+        if referencia == "":
+           referencia = "N/A"
+        precio = float(request.form["precio"])
+        precioiva = round(float(request.form["precio"])*1.12, 2)
+
+        inventario = {}
+        for nom in nombres:
+           ubicacion = request.form["ubicacion " + nom].upper()
+           if ubicacion == "":
+              ubicacion = "N/A"
+           ubicacionespecifica = request.form["ubicacionespecifica " + nom].upper()
+           if ubicacionespecifica == "":
+              ubicacionespecifica = "N/A"
+           stock = request.form["stock " + nom]
+           if stock == "":
+              stock = 0
+           else:
+              stock = int(request.form["stock " + nom])
+           inventario[nom] = {'ubicacion':ubicacion, 'ubicacionespecifica': ubicacionespecifica, 'stock':stock}
+        print(inventario)
+
+        datos = fdb.child("Inventario").get().val()
+        codigos = [""]
+        if datos != None:
+           codigos = [d['codigo'] for d in datos.values()]
+
+        #Validación, compara los nombres de todos las sucursales en la base de datos
+        if codigo in codigos:
+           return render_template('agregar_inventario_compras.html', message='El producto ya existe.')
+        else:
+           fdb.child("Inventario").push({
+            "codigo": codigo,
+            "descripcion": descripcion,
+            "oems": oems,
+            "marca": marca,
+            "referencia": referencia,
+            "precio": precio,
+            "precioiva": precioiva,
+            "estado": inventario
+           })
+           fdb.child("Entradas_Compras").push({
+              "documento": documento,
+              "fecha": fecha,
+              "productos": [codigo + ": "+ descripcion],
+              "tipo_compra": tipo_compra,
+              "cantidades": [inventario["9 de Octubre"]["stock"]],
+              "precio": [precio],
+              "total": round((inventario["9 de Octubre"]["stock"] * precio), 2)     
+           })
+        return redirect(url_for('entradas_compras'))
+    else:
+       datos = fdb.child("Sucursales").get().val()
+       nombres = [sucursal['nombre'] for sucursal in datos.values()]
+
+       return render_template("agregar_inventario_compras.html", nombres=nombres)  
+
+@app.route('/detalles_entrada_compra/<string:key>', methods=['GET', 'POST'])
+@login_required
+def detalles_entrada_compra(key):
+    print(key)
+    entrada = fdb.child('Entradas_Compras').child(key).get().val()
+    return render_template('detalles_entradas_compras.html', key=key, entrada=entrada)
+
+@app.route('/eliminar_entrada_compra/<string:key>')
+@login_required
+def eliminar_entrada_compra(key):
+    print(key)
+    salida = fdb.child('Entradas_Compras').child(key).get().val()
+    inventario = fdb.child('Inventario').get().val()
+
+    productos = salida['productos']
+    cantidades = salida['cantidades']
+
+    for i in range(len(productos)):
+        producto_codigo = productos[i].split(':')[0]
+        cantidad = int(cantidades[i])
+
+        print(producto_codigo)
+
+        for key, producto in inventario.items():
+            if producto['codigo'] == producto_codigo:
+                producto['estado']['9 de Octubre']['stock'] -= cantidad
+                break
+
+    fdb.child('Inventario').set(inventario)
+    fdb.child('Entradas_Compras').child(key).remove()
+
+    flash("La entrada por compra se ha eliminado con éxito")
+    return redirect(url_for('entradas_compras'))
 
 #-----------------------------------------ANALISIS ABC CORE-----------------------------------------------------
 

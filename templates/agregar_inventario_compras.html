@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Agregar entrada producto nuevo {% endblock %}
+
+
+{% block body %}
+<style>
+    form {
+      width: 80%;
+      margin: 0 auto;
+    }
+    
+    .left, .right {
+      width: 50%;
+    }
+    
+    .left {
+      float: left;
+    }
+    
+    .right {
+      margin-bottom: 20px;
+      float: right;
+      border-radius: 5px;
+      padding: 15px;
+    }
+    
+    input[type="text"] {
+      width: 80%;
+    }
+    input[type="number"] {
+      width: 80%;
+    }
+    input[type="date"] {
+        width: 80%;
+    }
+
+    .right input[type="text"] {
+      width: 100%;
+    }
+    .right input[type="number"] {
+      width: 100%;
+    }
+    
+    @media (max-width: 600px) {
+      .left, .right {
+        width: 100%;
+        float: none;
+      }
+    }
+</style>
+<h1 class="text-light">Agregar entrada producto nuevo</h1> 
+
+<br>
+
+{% if message %}
+    <p style="color: #FFFFFF;">{{ message }}</p>
+{% endif %}
+
+<body>
+
+<form action="{{ url_for('crear_producto_compras') }}" method="post">
+  <div class="left">
+    <label style="color: #FFFFFF;">No. Documento</label>
+    <input type="text" class="form-control documento" id="documento" name="documento" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+
+    <label style="color: #FFFFFF;">Fecha</label>
+    <input type="date" class="form-control documento" id="fecha" name="fecha" required>
+
+    <label style="color: #FFFFFF;">Código</label>
+    <input type="text" class="form-control codigo" id="codigo" name="codigo" oninput="verificarCodigo()" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+
+    <span style="color: #FFFFFF;" id="mensaje"></span> <br>
+
+    <label style="color: #FFFFFF;">Descripción</label>
+    <input type="text" class="form-control" name="descripcion" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+
+    <label style="color: #FFFFFF;">OEM</label><br>
+    <fieldset class="myfieldset">
+        <div class="inputs">
+            <input type="text" name="oem0" class="form-control oem" placeholder="Código">
+            <input type="text" name="oem0" class="form-control oem" placeholder="Subcódigo">
+        </div>
+        <button type="button" class="btn btn-lightGray mt-1" style="width: 80%;" onclick="agregarSubProducto(this)">Agregar subproducto</button>
+    </fieldset>    
+    <button type="button" class="agregarbutton btn btn-lightGray mt-4" onclick="agregarProducto()">Agregar producto</button>
+    <br>
+
+    <label style="color: #FFFFFF;">Precio</label>
+    <input type="text" class="form-control" name="precio" required>
+
+    <label style="color: #FFFFFF;">Marca</label>
+    <input type="text" class="form-control" name="marca" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+
+    <label style="color: #FFFFFF;">Referencia</label>
+    <input type="text" class="form-control" name="referencia">
+  </div>
+
+  <input type="radio" name="radio" value="Importación"> 
+  <label style="color: #FFFFFF;">Importación</label>
+  <br>
+  <input type="radio" name="radio" value="Compra local">
+  <label style="color: #FFFFFF;">Compra local</label>
+  <br>
+  
+    {% if nombres %}
+    {% for nom in nombres %}
+    <h3 class="text-light"> {{ nom }}</h3> 
+    <div class="right" style="background-color: black;">
+        <label style="color: #FFFFFF;">Ubicación</label>
+        <input type="text" class="form-control" name="ubicacion {{ nom }}">
+        <label style="color: #FFFFFF;">Ubicación especifica</label>
+        <input type="text" style="height: 70px;" class="form-control" name="ubicacionespecifica {{ nom }}">
+        <label style="color: #FFFFFF;">Stock</label>
+        <input type="text" class="form-control" name="stock {{ nom }}"  pattern="[0-9]*">
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
+    <a href="/entradas_compras/"> 
+        <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
+    </a>
+</form>
+
+</body>
+
+<script>
+    let contador = 1;
+
+    function agregarSubProducto(btn) {
+        var div = document.createElement("div");
+        div.setAttribute("class", "subproductos");
+        div.setAttribute("style", "display:flex; width: 80%; align-items: center;");
+        let inputName = btn.parentNode.querySelector('input').getAttribute('name');
+        div.innerHTML = '<input type="text" class="form-control oem" name="' + inputName + '" placeholder="Subcódigo"> <button type="button" class="btn-danger" style="height: 30px; width: 30px; margin-left: auto; border-radius: 20%; display: flex; align-items: center; justify-content: center;" onclick="eliminarSubProducto(this)"><i class="fas fa-trash"></i></button>';
+        let inputsDiv = btn.parentNode.querySelector('.inputs');
+        inputsDiv.appendChild(div);
+    }
+
+    function eliminarSubProducto(btn) {
+        btn.parentNode.remove();
+    }
+    function agregarProducto() {
+        // Crear un nuevo fieldset
+        let nuevoFieldset = document.createElement('fieldset');
+        nuevoFieldset.setAttribute('class', 'myfieldset mt-4');
+        nuevoFieldset.innerHTML = '<button type="button" class="btn-danger" style="height: 30px; width: 80%; display: flex; align-items: center; justify-content: center;" onclick="eliminarSubProducto(this)"><i class="fas fa-trash"></i></button>';
+
+        
+        // Crear un div para los inputs
+        let inputsDiv = document.createElement('div');
+        inputsDiv.setAttribute('class', 'inputs');
+       
+        // Crear los inputs
+        let inputCodigo = document.createElement('input');
+        inputCodigo.setAttribute('type', 'text');
+        inputCodigo.setAttribute('name', 'oem' + contador);
+        inputCodigo.setAttribute('class', 'form-control oem');
+        inputCodigo.setAttribute('placeholder', 'Código');
+        
+        let inputSubcodigo = document.createElement('input');
+        inputSubcodigo.setAttribute('type', 'text');
+        inputSubcodigo.setAttribute('name', 'oem' + contador);
+        inputSubcodigo.setAttribute('class', 'form-control oem');
+        inputSubcodigo.setAttribute('placeholder', 'Subcódigo');
+        
+        // Agregar los inputs al div
+        inputsDiv.appendChild(inputCodigo);
+        inputsDiv.appendChild(inputSubcodigo);
+        
+        // Crear el botón para agregar subproducto
+        let botonAgregarSubproducto = document.createElement('button');
+        botonAgregarSubproducto.setAttribute('type', 'button');
+        botonAgregarSubproducto.setAttribute('class', 'btn btn-lightGray mt-1');
+        botonAgregarSubproducto.setAttribute('style', 'width:80%;');
+        botonAgregarSubproducto.setAttribute('onclick', 'agregarSubProducto(this)');
+        botonAgregarSubproducto.textContent = 'Agregar subproducto';
+        
+        // Agregar el div y el botón al fieldset
+        nuevoFieldset.appendChild(inputsDiv);
+        nuevoFieldset.appendChild(botonAgregarSubproducto);
+        
+        // Obtener el fieldset original
+        let fieldsetOriginal = document.querySelector('.agregarbutton');
+        
+        // Agregar el nuevo fieldset después del original
+        fieldsetOriginal.parentNode.insertBefore(nuevoFieldset, fieldsetOriginal);
+        
+        // Incrementar el contador
+        contador++;
+      }
+
+      function eliminarProducto(btn) {
+        btn.parentNode.remove();
+      }
+
+      function verificarCodigo() {
+        var codigo = document.getElementById("codigo").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/verificar_codigo");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var respuesta = JSON.parse(xhr.responseText);
+                if (respuesta.existe) {
+                    // El código ya existe en la base de datos
+                    mensaje.textContent = "El código ya existe";
+                } else {
+                    // El código no existe en la base de datos
+                    mensaje.textContent = "No hay ningun producto con este codigo en la base de datos :)";
+                }
+            }
+        };
+        xhr.send("codigo=" + codigo);
+      }
+
+      const forceKeyPressUppercase = (e) => {
+        let el = e.target;
+        let charInput = e.keyCode;
+        if((charInput >= 97) && (charInput <= 122)) { // lowercase
+          if(!e.ctrlKey && !e.metaKey && !e.altKey) { // no modifier key
+            let newChar = charInput - 32;
+            let start = el.selectionStart;
+            let end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + String.fromCharCode(newChar) + el.value.substring(end);
+            el.setSelectionRange(start+1, start+1);
+            e.preventDefault();
+          }
+        }
+      };
+    
+      document.querySelectorAll(".codigo").forEach(function(current) {
+        current.addEventListener("keypress", forceKeyPressUppercase);
+      });
+      
+</script>
+
+{% endblock %}
