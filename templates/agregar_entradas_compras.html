@@ -186,15 +186,6 @@
 </style>
 
 <script>
-  function activarInput(inputId) {
-    // Desactivar ambos inputs
-    document.getElementById('cliente').disabled = true;
-    document.getElementById('sucursal').disabled = true;
-    
-    // Activar el input correspondiente al radio button seleccionado
-    document.getElementById(inputId).disabled = false;
-  }
-
   function validarFormulario() {
     var radios = document.getElementsByName('radio');
     var seleccionado = false;
