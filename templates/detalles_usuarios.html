@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block title %} Detalle Sucursal {% endblock %}
+{% block title %} Detalle usuario {% endblock %}
 
 
 {% block body %}
@@ -82,11 +82,13 @@
     {% endif %}
 {% endwith %}
 
-<h1 style="color: #FFFFFF; font-size:x-large;">Email</h1>
-<p style="color: #FFFFFF;">{{ campo['email'] }}</p>
+{% if campo %}
+    <h1 style="color: #FFFFFF; font-size:x-large;">Email</h1>
+    <p style="color: #FFFFFF;">{{ campo['email'] }}</p>
 
-<h1 style="color: #FFFFFF; font-size:x-large;">Rol</h1>
-<p style="color: #FFFFFF;">{{ campo['role'] }}</p>
+    <h1 style="color: #FFFFFF; font-size:x-large;">Rol</h1>
+    <p style="color: #FFFFFF;">{{ campo['role'] }}</p>
+{% endif %}
 
 <a href="/eliminar_usuarios/{{ key }}" onclick="return confirm('¿Seguro deseas eliminar?')"> 
     <button class="btn btn-danger">

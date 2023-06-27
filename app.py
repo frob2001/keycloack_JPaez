@@ -161,7 +161,9 @@ def crear_usuario():
 @app.route('/detalles_usuarios/<string:key>')
 @login_required
 def detalles_usuarios(key):
-    campo = fdb.child('Usuarios').child(key).get().val()
+    print(key)
+    print('50E4MeH0E5aF5EJDbGjRj5XdmXl1')
+    campo = fdb.child('Usuarios/' + key).get().val()
     return render_template('detalles_usuarios.html', key=key, campo=campo)
 
 
@@ -417,14 +419,15 @@ def crear_salida(sucursal_seleccionada):
 
           inventario = fdb.child("Inventario").get().val()
 
-          for producto_key, producto_data in inventario.items():
-              if producto_data["codigo"] == producto_codigo:
-                  estado = producto_data["estado"]
-                  if sucursal_seleccionada in estado:
-                      stock_actual = estado[sucursal_seleccionada]["stock"]
-                      nuevo_stock = stock_actual - cantidad
-                      estado[sucursal_seleccionada]["stock"] = nuevo_stock
-                      fdb.child("Inventario").child(producto_key).child("estado").set(estado)
+          if inventario != None:
+            for producto_key, producto_data in inventario.items():
+                if producto_data["codigo"] == producto_codigo:
+                    estado = producto_data["estado"]
+                    if sucursal_seleccionada in estado:
+                        stock_actual = estado[sucursal_seleccionada]["stock"]
+                        nuevo_stock = stock_actual - cantidad
+                        estado[sucursal_seleccionada]["stock"] = nuevo_stock
+                        fdb.child("Inventario").child(producto_key).child("estado").set(estado)
 
 
 
@@ -477,19 +480,22 @@ def eliminar_salida(sucursal_seleccionada, key):
     salida = fdb.child('Salidas').child(sucursal_seleccionada).child(llave).get().val()
     inventario = fdb.child('Inventario').get().val()
 
+    print(inventario)
+
     productos = salida['productos']
     cantidades = salida['cantidades']
 
-    for i in range(len(productos)):
-        producto_codigo = productos[i].split(':')[0]
-        cantidad = int(cantidades[i])
+    if inventario != None:
+        for i in range(len(productos)):
+            producto_codigo = productos[i].split(':')[0]
+            cantidad = int(cantidades[i])
 
-        for key, producto in inventario.items():
-            if producto['codigo'] == producto_codigo:
-                producto['estado'][sucursal_seleccionada]['stock'] += cantidad
-                break
+            for key, producto in inventario.items():
+                if producto['codigo'] == producto_codigo:
+                    producto['estado'][sucursal_seleccionada]['stock'] += cantidad
+                    break
+        fdb.child('Inventario').set(inventario)
 
-    fdb.child('Inventario').set(inventario)
     fdb.child('Salidas').child(sucursal_seleccionada).child(llave).remove()
 
     flash("El producto se ha sido eliminado con éxito")
@@ -593,6 +599,7 @@ def crear_entrada_compra():
       productos = request.form.getlist("productocodigo")
       cantidades = request.form.getlist("cantidadproducto")
       precios = request.form.getlist("precioproducto")
+      total = request.form["totalgeneral"].upper()
 
       print(documento, fecha, total, productos, cantidades)
 
@@ -607,23 +614,24 @@ def crear_entrada_compra():
 
           inventario = fdb.child("Inventario").get().val()
 
-          for producto_key, producto_data in inventario.items():
-              if producto_data["codigo"] == producto_codigo:
-                  estado = producto_data["estado"]
-                  if "9 de Octubre" in estado:
-                      stock_actual = estado["9 de Octubre"]["stock"]
-                      nuevo_stock = stock_actual + cantidad
-                      estado["9 de Octubre"]["stock"] = nuevo_stock
-                      fdb.child("Inventario").child(producto_key).child("estado").set(estado)
+          if inventario != None:
+            for producto_key, producto_data in inventario.items():
+                if producto_data["codigo"] == producto_codigo:
+                    estado = producto_data["estado"]
+                    if "9 de Octubre" in estado:
+                        stock_actual = estado["9 de Octubre"]["stock"]
+                        nuevo_stock = stock_actual + cantidad
+                        estado["9 de Octubre"]["stock"] = nuevo_stock
+                        fdb.child("Inventario").child(producto_key).child("estado").set(estado)
 
       fdb.child("Entradas_Compras").push({
         "documento": documento,
         "fecha": fecha,
         "productos": productos,
         "tipo_compra": tipo_compra,
-        "cantidades": [inventario["9 de Octubre"]["stock"]],
-        "precio": [precios],
-        "total": round((inventario["9 de Octubre"]["stock"] * precios), 2)     
+        "cantidades": cantidades,
+        "precio": precios,
+        "total": total     
       })
       flash("La salida se ha creado")
       return redirect(url_for('entradas_compras'))
@@ -661,18 +669,19 @@ def eliminar_entrada_compra(key):
     productos = salida['productos']
     cantidades = salida['cantidades']
 
-    for i in range(len(productos)):
-        producto_codigo = productos[i].split(':')[0]
-        cantidad = int(cantidades[i])
+    if inventario != None:
+        for i in range(len(productos)):
+            producto_codigo = productos[i].split(':')[0]
+            cantidad = int(cantidades[i])
 
-        print(producto_codigo)
+            print(producto_codigo)
 
-        for key, producto in inventario.items():
-            if producto['codigo'] == producto_codigo:
-                producto['estado']['9 de Octubre']['stock'] -= cantidad
-                break
+            for key, producto in inventario.items():
+                if producto['codigo'] == producto_codigo:
+                    producto['estado']['9 de Octubre']['stock'] -= cantidad
+                    break
+        fdb.child('Inventario').set(inventario)
 
-    fdb.child('Inventario').set(inventario)
     fdb.child('Entradas_Compras').child(llave).remove()
 
     flash("La entrada por compra se ha eliminado con éxito")
