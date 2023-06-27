@@ -579,7 +579,70 @@ def crear_producto_compras():
        datos = fdb.child("Sucursales").get().val()
        nombres = [sucursal['nombre'] for sucursal in datos.values()]
 
-       return render_template("agregar_inventario_compras.html", nombres=nombres)  
+       return render_template("agregar_inventario_compras.html", nombres=nombres)
+
+@app.route('/crear_entrada_compra/', methods=['GET', 'POST'])
+@login_required
+def crear_entrada_compra():
+    if request.method == 'POST':
+      documento = request.form["documento"].upper()
+      fecha = request.form["fecha"]
+
+      tipo_compra = request.form['radio'].upper()
+      total = request.form["totalgeneral"].upper()
+      productos = request.form.getlist("productocodigo")
+      cantidades = request.form.getlist("cantidadproducto")
+      precios = request.form.getlist("precioproducto")
+
+      print(documento, fecha, total, productos, cantidades)
+
+      for i, producto in enumerate(productos):
+          if ":" in producto:
+              producto_info = producto.split(":")
+              producto_codigo = producto_info[0].strip()  # Obtener el código del producto sin espacios adicionales
+          else:
+              producto_codigo = producto.strip()  # Utilizar el nombre completo del producto como código
+
+          cantidad = int(cantidades[i])
+
+          inventario = fdb.child("Inventario").get().val()
+
+          for producto_key, producto_data in inventario.items():
+              if producto_data["codigo"] == producto_codigo:
+                  estado = producto_data["estado"]
+                  if "9 de Octubre" in estado:
+                      stock_actual = estado["9 de Octubre"]["stock"]
+                      nuevo_stock = stock_actual + cantidad
+                      estado["9 de Octubre"]["stock"] = nuevo_stock
+                      fdb.child("Inventario").child(producto_key).child("estado").set(estado)
+
+      fdb.child("Entradas_Compras").push({
+        "documento": documento,
+        "fecha": fecha,
+        "productos": productos,
+        "tipo_compra": tipo_compra,
+        "cantidades": [inventario["9 de Octubre"]["stock"]],
+        "precio": [precios],
+        "total": round((inventario["9 de Octubre"]["stock"] * precios), 2)     
+      })
+      flash("La salida se ha creado")
+      return redirect(url_for('entradas_compras'))
+    
+    else:
+      productos = {}
+      datos = fdb.child("Inventario").get().val()
+      for producto in datos.values():
+          sucursal_info = producto["estado"]
+          estado = sucursal_info["9 de Octubre"]
+          stock = estado["stock"]
+          oems=[]
+          for data in producto['oems'].values():
+            for x in range (1, len(data)):
+              oems.append(str(data[0]) + str(data[x]))
+          productos[producto["codigo"]] = [oems, producto["descripcion"], stock, producto["precio"]]
+        
+      return render_template("agregar_entradas_compras.html", productos=productos)
+
 
 @app.route('/detalles_entrada_compra/<string:key>', methods=['GET', 'POST'])
 @login_required
