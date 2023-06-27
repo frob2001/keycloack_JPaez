@@ -591,8 +591,8 @@ def detalles_entrada_compra(key):
 @app.route('/eliminar_entrada_compra/<string:key>')
 @login_required
 def eliminar_entrada_compra(key):
-    print(key)
-    salida = fdb.child('Entradas_Compras').child(key).get().val()
+    llave = key
+    salida = fdb.child('Entradas_Compras').child(llave).get().val()
     inventario = fdb.child('Inventario').get().val()
 
     productos = salida['productos']
@@ -610,7 +610,7 @@ def eliminar_entrada_compra(key):
                 break
 
     fdb.child('Inventario').set(inventario)
-    fdb.child('Entradas_Compras').child(key).remove()
+    fdb.child('Entradas_Compras').child(llave).remove()
 
     flash("La entrada por compra se ha eliminado con éxito")
     return redirect(url_for('entradas_compras'))
