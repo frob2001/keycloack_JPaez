@@ -11,34 +11,51 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+
     
 </head>
 
 <div class="wrapper">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script><link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
+  
   <!-- Sidebar  -->
   <nav id="sidebar">
       <div class="sidebar-header">
         <img src="{{ url_for('static', filename='images/JPaezLogo.png') }}">
       </div>
 
-      <ul class="list-unstyled components">
+      <ul class="list-unstyled">
           <li>
-              <a href="/inventario/">Inventario</a>
+              <a style="color: white; text-decoration: none;" href="/inventario/">Inventario</a>
           </li>
           <li>
-              <a href="/salidas/">Salidas</a>
+              <a style="color: white; text-decoration: none;" href="/salidas/">Salidas</a>
+          </li>
+          <li class="active" >
+            <a href="#homeSubmenu" style="color: white; text-decoration: none;" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Entradas</a>
+            <ul class="collapse list-unstyled" id="homeSubmenu">
+                <li class="lisubmenu">
+                  <a style="color: white; text-decoration: none;" href="/entradas_compras/">Entradas por compras</a>
+                </li>
+                <li class="lisubmenu">
+                  <a style="color: white; text-decoration: none;" href="/entradas_devolucion/">Entradas por devolución</a>
+                </li>
+                <li class="lisubmenu">
+                  <a style="color: white; text-decoration: none;" href="/entradas_sucursal/">Entradas por sucursal</a>
+                </li>
+            </ul>
+         </li>
+          <li>
+              <a style="color: white; text-decoration: none;" href="/sucursales/">Sucursales</a>
           </li>
           <li>
-            <a href="/entradas_compras/">Entradas</a>
+              <a style="color: white; text-decoration: none;" href="/usuarios/">Usuarios</a>
           </li>
           <li>
-              <a href="/sucursales/">Sucursales</a>
-          </li>
-          <li>
-              <a href="/usuarios/">Usuarios</a>
-          </li>
-          <li>
-              <a href="/logout">Logout</a>
+              <a style="color: white; text-decoration: none;"s href="/logout">Logout</a>
           </li>
       </ul>
   </nav>

@@ -1,0 +1,583 @@
+{% extends 'base.html' %}
+
+{% block title %} Agregar devolución {% endblock %}
+
+{% block body %}
+<style>
+  .btn-lightGray
+  {
+      
+      cursor: pointer;
+      outline: 0;
+      color: #FFFFFF;
+      background-color: #787878;
+      border-color: #787878;
+      display: inline-block;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: .25rem;
+      transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
+  }
+
+  .btn-lightGray:hover {
+      color: #fff;
+      background-color: #494949;
+      border-color: #494949;          
+  }
+    form {
+      width: 80%;
+      margin: 0 auto;
+    }
+    
+    .left, .right {
+      width: 50%;
+    }
+    
+    .left {
+      float: left;
+    }
+    
+    .right {
+      float: right;
+    }
+    
+    input[type="text"] {
+      width: 80%;
+    }
+    input[type="number"] {
+      width: 80%;
+    }
+
+    .modal-body input[type="number"] {
+      width: 20%;
+    }
+    input[type="date"] {
+        width: 80%;
+    }
+    .left select {
+        width: 80%;
+    }
+
+    .dataTables_scrollHead {
+      width: 100% !important;
+      margin-top: 0;
+    }
+
+    .right input[type="text"] {
+      width: 80%;
+    }
+    .right select {
+        width: 80%;
+    }
+
+    .modal-header{
+      background-color: #787878;
+      border: 0px;
+    }
+
+    .modal-body{
+      background-color: #323232;
+    }
+
+    .modal-title{
+      color: #ffffff;
+    }
+
+    .modal-footer{
+      background-color: #323232;
+      border: 0px;
+    }
+
+    .producto-agregado{
+      color: #ffffff;
+      background-color: #000000;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 80%;
+    }
+
+    .totaldiv {
+      color: #ffffff;
+      background-color: #000000;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+  
+
+    .close{
+      color: #ffffff;
+    }
+
+    table {
+        width: 100%;
+    }
+    
+    tbody{
+        background-color: white;
+    }
+    th{
+        text-align: center;
+    }
+    thead{
+        background: black;
+        color: white;
+    }
+    td {
+        text-align: center;
+    }
+    h2, .h2{
+        margin: 0;
+        font-size: 100%;
+    }
+    table.table-bordered{
+        border:1px solid black;
+    }
+    table.table-bordered > thead > tr > th{
+        border:1px solid black;
+    }
+    table.table-bordered > tbody > tr > td{
+        border:1px solid black;
+    }
+
+    
+    @media (max-width: 600px) {
+      .left, .right {
+        width: 100%;
+        float: none;
+      }
+      input[type="text"] {
+        width: 100%;
+      }
+      input[type="number"] {
+        width: 100%;
+      }
+      input[type="date"] {
+          width: 100%;
+      }
+      .left select {
+          width: 100%;
+      }
+      .right input[type="text"] {
+        width: 100%;
+      }
+      .right select {
+          width: 100%;
+      }
+      .producto-agregado{
+        width: 100%;
+      }
+      .totaldiv {
+        width: 100%;
+      }
+    }
+</style>
+
+<script>
+  function activarInput(inputId) {
+    // Desactivar ambos inputs
+    document.getElementById('funcional').disabled = true;
+    document.getElementById('nofuncional').disabled = true;
+    
+    // Activar el input correspondiente al radio button seleccionado
+    document.getElementById(inputId).disabled = false;
+  }
+
+  function validarFormulario() {
+    var radios = document.getElementsByName('radio');
+    var seleccionado = false;
+
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        seleccionado = true;
+        break;
+      }
+    }
+
+    if (!seleccionado) {
+      alert('Debes seleccionar una opción (Funcional o No funcional)');
+      return false;
+    }
+  }
+
+  function seleccionarProducto() {
+    var radios = document.getElementsByName('producto_radio');
+    var seleccionado = false;
+    var codigoProducto = '';
+    var descripcionProducto = '';
+  
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        seleccionado = true;
+        codigoProducto = radios[i].value;
+        descripcionProducto = radios[i].parentNode.nextElementSibling.nextElementSibling.textContent;
+        break;
+      }
+    }
+  
+    if (!seleccionado) {
+      alert('Debes seleccionar un producto');
+      return false;
+    }
+  
+    // Realizar las acciones necesarias con el producto seleccionado
+    console.log('Producto seleccionado:', codigoProducto);
+    console.log('Descripción:', descripcionProducto);
+  
+    // Mostrar el código y la descripción en el elemento con el id "seleccionado"
+    var seleccionadoElement = document.getElementById("seleccionado");
+    seleccionadoElement.textContent = codigoProducto + ": " + descripcionProducto;
+  }
+
+  function guardarCambios() {
+    // Obtener el producto seleccionado
+    var productoSeleccionado = document.getElementById("seleccionado").textContent;
+    console.log(productoSeleccionado);
+  
+    // Obtener la cantidad ingresada
+    var cantidad = document.getElementById("cantidad").value;
+    console.log(cantidad);
+  
+    if (productoSeleccionado.trim() === "") {
+      alert('Debes seleccionar un producto');
+      return false;
+    }
+  
+    if (cantidad.trim() === "" || cantidad <= 0) {
+      alert('Debes ingresar una cantidad');
+      return false;
+    }
+  
+    // Obtener la fila correspondiente al producto seleccionado en la tabla
+    var filaProducto = document.querySelector('input[name="producto_radio"][value="' + productoSeleccionado.split(':')[0].trim() + '"]').parentNode.parentNode;
+  
+    // Obtener el valor actual del stock del producto en la tabla
+    var stockActual = parseInt(filaProducto.cells[5].textContent);
+  
+    // Restar la cantidad ingresada al stock actual
+    var stockDespuesResta = stockActual - parseInt(cantidad);
+  
+    if (stockDespuesResta < 0) {
+      alert('No puedes ingresar una cantidad mayor al stock disponible');
+      return false;
+    }
+  
+    // Actualizar el valor del stock en la tabla
+    filaProducto.cells[5].textContent = stockDespuesResta;
+  
+    // Resaltar el nuevo valor del stock en color rojo
+    filaProducto.cells[5].style.color = 'red';
+  
+    var precio = parseFloat(filaProducto.cells[4].textContent);
+  
+    // Crear un nuevo div para mostrar el producto añadido
+    var nuevoDiv = document.createElement("div");
+  
+    // Crear un elemento <p> para el producto seleccionado
+    var pProductoSeleccionado = document.createElement("p");
+    pProductoSeleccionado.id = "productocodigo";
+    pProductoSeleccionado.name = "productocodigo";
+    var contenidoProductoSeleccionado = document.createTextNode(productoSeleccionado);
+    pProductoSeleccionado.appendChild(contenidoProductoSeleccionado);
+    nuevoDiv.appendChild(pProductoSeleccionado);
+  
+    // Crear un elemento <input> para el nombre del producto (oculto)
+    var inputProductoSeleccionado = document.createElement("input");
+    inputProductoSeleccionado.type = "hidden";
+    inputProductoSeleccionado.name = "productocodigo";
+    inputProductoSeleccionado.value = productoSeleccionado;
+    nuevoDiv.appendChild(inputProductoSeleccionado);
+  
+    // Crear un elemento <p> para la cantidad
+    var pCantidad = document.createElement("p");
+    pCantidad.id = "cantidadproducto";
+    pCantidad.name = "cantidadproducto";
+    var contenidoCantidad = document.createTextNode("Cantidad: " + cantidad);
+    pCantidad.appendChild(contenidoCantidad);
+    nuevoDiv.appendChild(pCantidad);
+  
+    // Crear un elemento <input> para la cantidad (oculto)
+    var inputCantidad = document.createElement("input");
+    inputCantidad.type = "hidden";
+    inputCantidad.name = "cantidadproducto";
+    inputCantidad.value = cantidad;
+    nuevoDiv.appendChild(inputCantidad);
+  
+    // Crear un elemento <p> para el precio
+    var pPrecio = document.createElement("p");
+    pPrecio.id = "precioproducto";
+    pPrecio.name = "precioproducto";
+    var contenidoPrecio = document.createTextNode("Precio: " + precio);
+    pPrecio.appendChild(contenidoPrecio);
+    nuevoDiv.appendChild(pPrecio);
+
+    var inputPrecio= document.createElement("input");
+    inputPrecio.type = "hidden";
+    inputPrecio.name = "precioproducto";
+    inputPrecio.value = precio;
+    nuevoDiv.appendChild(inputPrecio);
+  
+    // Crear un elemento <p> para el total
+    var pTotal = document.createElement("p");
+    pTotal.id = "total";
+    pTotal.name = "total";
+    var contenidoTotal = document.createTextNode("Total: " + (precio * cantidad).toFixed(2));
+    pTotal.appendChild(contenidoTotal);
+    nuevoDiv.appendChild(pTotal);
+  
+    // Crear un elemento <input> para el total (oculto)
+    var inputTotal = document.createElement("input");
+    inputTotal.type = "hidden";
+    inputTotal.name = "total";
+    inputTotal.value = (precio * cantidad).toFixed(2);
+    nuevoDiv.appendChild(inputTotal);
+  
+    //LISTENER
+    pTotal.addEventListener("DOMSubtreeModified", actualizarTotalGeneral);
+  
+    // Agregar los elementos <p> al nuevo div
+    nuevoDiv.appendChild(pProductoSeleccionado);
+    nuevoDiv.appendChild(pCantidad);
+    nuevoDiv.appendChild(pPrecio);
+    nuevoDiv.appendChild(pTotal);
+  
+    // Agregar una clase al nuevo div para estilizarlo si es necesario
+    nuevoDiv.className = "producto-agregado";
+  
+    // Agregar el nuevo div a la parte izquierda del HTML
+    var contenedorIzquierdo = document.getElementsByClassName("left")[0];
+    contenedorIzquierdo.appendChild(nuevoDiv);
+  
+    // Crear un botón para eliminar el div si es necesario
+    var botonEliminar = document.createElement("button");
+    botonEliminar.innerHTML = '<i class="fas fa-trash"></i>';
+    botonEliminar.className = "btn-danger";
+    botonEliminar.style.height = "30px";
+    botonEliminar.style.width = "30px";
+    botonEliminar.style.display = "flex";
+    botonEliminar.style.alignItems = "center";
+    botonEliminar.style.justifyContent = "center";
+  
+    //FUNCION DE BOTON ELIMINAR
+    botonEliminar.onclick = function() {
+      contenedorIzquierdo.removeChild(nuevoDiv);
+  
+      var cantidadProducto = parseInt(inputCantidad.value);
+      var filaProducto = document.querySelector('input[name="producto_radio"][value="' + productoSeleccionado.split(':')[0].trim() + '"]').parentNode.parentNode;
+      console.log(filaProducto);
+      // Obtener el valor actual del stock del producto en la tabla
+      var stockActual = parseInt(filaProducto.cells[5].textContent);
+  
+      // Sumar la cantidad ingresada al stock actual
+      var stockDespuesSuma = stockActual + cantidadProducto;
+  
+      // Actualizar el valor del stock en la tabla
+      filaProducto.cells[5].textContent = stockDespuesSuma;
+  
+      // Resaltar el nuevo valor del stock en color negro
+      filaProducto.cells[5].style.color = 'black'; 
+      actualizarTotalGeneral();
+      eliminarElemento(nuevoDiv);
+    };
+    actualizarTotalGeneral();
+    // Agregar el botón de eliminar al nuevo div
+    nuevoDiv.appendChild(botonEliminar);
+  }
+  
+
+  var totalGeneral = 0;
+
+  function actualizarTotalGeneral() {
+    // Obtener todos los elementos <p> con el id "total"
+    var elementosTotal = document.querySelectorAll('p#total');
+
+    // Reiniciar el valor del total general
+    totalGeneral = 0;
+
+    // Sumar los valores de los elementos <p> y actualizar el total general
+    for (var i = 0; i < elementosTotal.length; i++) {
+      var valorTotal = parseFloat(elementosTotal[i].textContent.split(':')[1].trim());
+      totalGeneral += valorTotal;
+    }
+
+    // Actualizar el contenido del div con el id "totalgeneral"
+    document.getElementById("totalgeneral").textContent = "Total: " + totalGeneral.toFixed(2);
+    document.querySelector("input[name='totalgeneral']").value = totalGeneral.toFixed(2);
+  }
+
+  function eliminarElemento(elemento) {
+    var cantidad = parseInt(elemento.childNodes[1].textContent.split(':')[1].trim());
+    var valorTotal = parseFloat(elemento.childNodes[3].textContent.split(':')[1].trim());
+    totalGeneral -= valorTotal;
+    document.getElementById("totalgeneral").textContent = "Total: " + totalGeneral.toFixed(2);
+    document.querySelector("input[name='totalgeneral']").value = totalGeneral.toFixed(2);
+
+  }
+
+  $(document).ready(function() {
+    $('#example').DataTable({
+      "language": {
+        "lengthMenu": "Mostrar _MENU_ registros por página",
+        "zeroRecords": "No se encontraron resultados",
+        "info": "",
+        "infoEmpty": "No hay registros disponibles",
+        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+        "search": "Buscar:",
+        "paginate": {
+          "first": "Primero",
+          "last": "Último",
+          "next": "Siguiente",
+          "previous": "Anterior"
+        }
+      },
+      "columnDefs": [
+        { "searchable": false, "orderable": false, "targets": 0 },
+        { "searchable": true, "orderable": true, "targets": 1 },
+        { "searchable": true, "orderable": true, "targets": 2 },
+        { "searchable": true, "orderable": true, "targets": 3 },
+        { "searchable": true, "orderable": true, "targets": 4 }
+      ],
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+      "scrollX": true,
+      "scrollY": "200px",
+      "scrollCollapse": true,
+      "paging": false,
+      dom: "<'row'<'col-sm-12 col-md-6 my-2' fB><'col-sm-12 col-md-6'>>" +
+        "<tr>" +
+        "<'row'<'col-sm-12 col-md-5'ilp><'col-sm-12 col-md-7 my-2 text-right'>>"
+    });
+  
+    $('#myModal').on('shown.bs.modal', function () {
+      $('#example').DataTable().columns.adjust();
+    });
+  });
+
+</script>
+
+
+<h1 class="text-light">Agregar salida</h1> 
+
+<br>
+
+{% if message %}
+    <p style="color: #FFFFFF;">{{ message }}</p>
+{% endif %}
+
+<body>
+
+<form action="/crear_salida/{{ sucursal_seleccionada }}" method="post" onsubmit="return validarFormulario()">
+  <div class="left">
+    <label style="color: #FFFFFF;">No. Documento</label>
+    <input type="text" class="form-control documento" id="documento" name="documento" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
+
+    <label style="color: #FFFFFF;">Fecha</label>
+    <input type="date" class="form-control documento" id="fecha" name="fecha" required>
+
+    <label style="color: #FFFFFF;">Productos</label>
+
+    <br>
+
+    <button type="button" class="btn btn-lightGray" data-toggle="modal" data-target="#myModal">
+        Agregar producto
+    </button>
+
+    <div class="totaldiv" style="justify-content: center;">
+      <p id="totalgeneral" name="totalgeneral" style="margin-bottom: 0px;">Total: 0.00</p>
+      <input type="hidden" name="totalgeneral" value="0.00">
+    </div>
+    
+
+
+  </div>
+
+  <div class="right">
+    <input type="radio" name="radio" onclick="activarInput('funcional')"> 
+    <label style="color: #FFFFFF;">Funcional</label>
+    <br>
+    <input type="text" class="form-control" id="funcional" name="funcional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled>
+    <textarea type="text" class="form-control" id="funcional" name="funcional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled></textarea>
+    <br>
+    <input type="radio" name="radio" onclick="activarInput('nofuncional')"> 
+    <label style="color: #FFFFFF;">No funcional</label>
+    <br>
+    <input type="text" class="form-control" id="nofuncional" name="nofuncional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled>
+    <textarea type="text" class="form-control" id="nofuncional" name="nofuncional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled></textarea>
+    <br>    
+    
+    <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
+    <a href="/salidas/"> 
+        <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
+    </a>
+  </div>
+
+  <div id="myModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="modalForm">
+            <div class="modal-header">
+              <h5 class="modal-title">Agregar producto</h5>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <table class="table table-striped table-bordered" id="example">
+                <thead>
+                  <tr>
+                    <th> 🔘 </th>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th>OEMs</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for codigo, producto in productos.items() %}
+                  <tr>
+                    <td><input type="radio" name="producto_radio" value="{{ codigo }}" onclick="seleccionarProducto()"></td>
+                    <td>{{ codigo }}</td>
+                    <td>{{ producto[1] }}</td>
+                    <td>{{ producto[0]|join(', ') }}</td>
+                    <td>{{ producto[3] }}</td>
+                    <td>{{ producto[2] }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <p style="color: #ffffff;">Producto seleccionado:</p>
+              <p id="seleccionado" style="color: #ffffff;">  </p>
+              <p style="color: #ffffff;">Cantidad:</p>
+              <input class="form-control modal-input"type="number" id="cantidad" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="guardarCambios()">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+    </div>
+  </div>
+</form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+
+
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input@1.3.2/dist/bs-custom-file-input.min.js"></script>
+
+</body>
+
+{% endblock %}
+

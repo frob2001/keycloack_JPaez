@@ -77,7 +77,6 @@ $(document).ready(function () {
             var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
 
             pagination.find('a.paginate_button').addClass('btn btn-default');
-            pagination.find('a.current').addClass('btn btn-primary');
             pagination.find('a.previous').html('&lt;');
             pagination.find('a.next').html('&gt;');
 
@@ -152,7 +151,6 @@ $(document).ready(function () {
             var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
 
             pagination.find('a.paginate_button').addClass('btn btn-default');
-            pagination.find('a.current').addClass('btn btn-primary');
             pagination.find('a.previous').html('&lt;');
             pagination.find('a.next').html('&gt;');
 

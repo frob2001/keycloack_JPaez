@@ -125,6 +125,24 @@ div.dataTables_length select {
     display: block;
 }
 
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #000;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
 #sidebar ul li a:hover {
     color: #ffffff;
     background: #787878;
@@ -134,6 +152,10 @@ div.dataTables_length select {
 #sidebarCollapse{
     display: none;
     background-color: #000000;
+}
+
+.lisubmenu{
+    background-color: #494949;
 }
 
 /* ---------------------------------------------------
