@@ -599,8 +599,6 @@ def crear_entrada_compra():
       precios = request.form.getlist("precioproducto")
       total = request.form["totalgeneral"].upper()
 
-      print(documento, fecha, total, productos, cantidades)
-
       for i, producto in enumerate(productos):
           if ":" in producto:
               producto_info = producto.split(":")
@@ -711,82 +709,66 @@ def crear_devolucion(sucursal_seleccionada):
     if request.method == 'POST':
       documento = request.form["documento"].upper()
       fecha = request.form["fecha"]
+      funcion = request.form['radio'].upper()
+      if funcion == "funcional":
+         motivo = request.form['funcional']
+      else:
+         motivo = request.form['nofuncional']
 
-      sucursal = request.form.get('sucursal', 'N/A').upper()
-      
-      cliente = request.form.get('cliente', 'N/A').upper()
-
-      tipo_pago = request.form["tipo_pago"].upper()
 
       total = request.form["totalgeneral"].upper()
+      producto = request.form["productocodigo"]
+      cantidad = request.form["cantidadproducto"]
+      precio = request.form["precioproducto"]
+      total = request.form["totalgeneral"].upper()
 
-      productos = request.form.getlist("productocodigo")
+      if ":" in producto:
+        producto_info = producto.split(":")
+        producto_codigo = producto_info[0].strip()  # Obtener el código del producto sin espacios adicionales
+      else:
+        producto_codigo = producto.strip()  # Utilizar el nombre completo del producto como código
 
-      cantidades = request.form.getlist("cantidadproducto")
-
-      precios = request.form.getlist("precioproducto")
-
-      descuento = int(request.form["descuento"])
-
-      print(documento, fecha, cliente, sucursal, tipo_pago, total, descuento, productos, cantidades)
-
-      for i, producto in enumerate(productos):
-          if ":" in producto:
-              producto_info = producto.split(":")
-              producto_codigo = producto_info[0].strip()  # Obtener el código del producto sin espacios adicionales
-          else:
-              producto_codigo = producto.strip()  # Utilizar el nombre completo del producto como código
-
-          cantidad = int(cantidades[i])
-
-          inventario = fdb.child("Inventario").get().val()
-
-          if inventario != None:
+      inventario = fdb.child("Inventario").get().val()
+        
+      if funcion == "funcional":
+        if inventario != None:
             for producto_key, producto_data in inventario.items():
-                if producto_data["codigo"] == producto_codigo:
-                    estado = producto_data["estado"]
-                    if sucursal_seleccionada in estado:
+               if producto_data["codigo"] == producto_codigo:
+                estado = producto_data["estado"]
+                if sucursal_seleccionada in estado:
                         stock_actual = estado[sucursal_seleccionada]["stock"]
-                        nuevo_stock = stock_actual - cantidad
+                        nuevo_stock = stock_actual + cantidad
                         estado[sucursal_seleccionada]["stock"] = nuevo_stock
                         fdb.child("Inventario").child(producto_key).child("estado").set(estado)
 
 
-
-      fdb.child("Salidas").child(sucursal_seleccionada).push({
+      fdb.child("Entradas_Devolucion").child(sucursal_seleccionada).push({
         "documento": documento,
         "fecha": fecha,
-        "cliente": cliente,
-        "sucursal": sucursal,
-        "tipo_pago": tipo_pago,
-        "productos": productos,
-        "cantidades": cantidades,
-        "precio": precios,
-        "total": total,
-        "descuento": descuento
+        "producto": producto,
+        "cantidad": cantidad,
+        "motivo": motivo,
+        "funcional": funcion,
+        "precio": precio,
+        "total": total     
       })
       flash("La salida se ha creado")
       return redirect(url_for('salidas'))
     
     else:
-      datos = fdb.child("Sucursales").get().val()
-      nombres = [sucursal_seleccionada['nombre'] for sucursal_seleccionada in datos.values()]
-      productos_con_stock = {}
+      productos = {}
       datos = fdb.child("Inventario").get().val()
       for producto in datos.values():
           sucursal_info = producto["estado"]
-          estado = sucursal_info[sucursal_seleccionada]
+          estado = sucursal_info["sucursal_seleccionada"]
           stock = estado["stock"]
-          if stock > 0:
-            oems=[]
-            for data in producto['oems'].values():
-              for x in range (1, len(data)):
-                oems.append(str(data[0]) + str(data[x]))
-            productos_con_stock[producto["codigo"]] = [oems, producto["descripcion"], stock, producto["precio"]]
+          oems=[]
+          for data in producto['oems'].values():
+            for x in range (1, len(data)):
+              oems.append(str(data[0]) + str(data[x]))
+          productos[producto["codigo"]] = [oems, producto["descripcion"], stock, producto["precio"]]
         
-          print(productos_con_stock)
-        
-      return render_template("agregar_salidas.html", productos=productos_con_stock, nombres=nombres, sucursal_seleccionada=sucursal_seleccionada)
+      return render_template("agregar_devolucion.html", productos=productos, sucursal_seleccionada=sucursal_seleccionada)
 
 
 #-----------------------------------------ANALISIS ABC CORE-----------------------------------------------------

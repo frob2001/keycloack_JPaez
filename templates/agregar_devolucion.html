@@ -193,7 +193,15 @@
     
     // Activar el input correspondiente al radio button seleccionado
     document.getElementById(inputId).disabled = false;
+    
+    // Restablecer el valor del elemento de entrada no seleccionado
+    if (inputId === 'funcional') {
+      document.getElementById('nofuncional').value = '';
+    } else {
+      document.getElementById('funcional').value = '';
+    }
   }
+  
 
   function validarFormulario() {
     var radios = document.getElementsByName('radio');
@@ -467,7 +475,7 @@
 </script>
 
 
-<h1 class="text-light">Agregar salida</h1> 
+<h1 class="text-light">Agregar devolución</h1> 
 
 <br>
 
@@ -503,21 +511,19 @@
   </div>
 
   <div class="right">
-    <input type="radio" name="radio" onclick="activarInput('funcional')"> 
+    <input type="radio" name="radio" onclick="activarInput('funcional')" value="funcional"> 
     <label style="color: #FFFFFF;">Funcional</label>
     <br>
-    <input type="text" class="form-control" id="funcional" name="funcional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled>
     <textarea type="text" class="form-control" id="funcional" name="funcional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled></textarea>
     <br>
-    <input type="radio" name="radio" onclick="activarInput('nofuncional')"> 
+    <input type="radio" name="radio" onclick="activarInput('nofuncional')" value="nofuncional"> 
     <label style="color: #FFFFFF;">No funcional</label>
     <br>
-    <input type="text" class="form-control" id="nofuncional" name="nofuncional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled>
     <textarea type="text" class="form-control" id="nofuncional" name="nofuncional" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled></textarea>
     <br>    
     
     <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
-    <a href="/salidas/"> 
+    <a href="/entradas_devolucion/"> 
         <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
     </a>
   </div>
