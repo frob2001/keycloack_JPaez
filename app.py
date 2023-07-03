@@ -822,9 +822,59 @@ def abc_analysis():
     rectangles.append((bottom_left, top_right))
 
     print(abc_analysis)
-
-
     return render_template('abc.html', inventory_items=inventory_items, result=result, rectangles=rectangles, abc_analysis=abc_analysis)
+
+#-----------------------------------------API ANALISIS ABC--------------------------------------------------------
+@app.route('/api_abc_analisis/')
+def api_abc_analisis():
+    # Obtener los datos de Firebase
+    inventario = fdb.child("Inventario").get()
+
+    # Multiplicamos el stock por el precio para obtener el valor de los diferentes articulos en inventario
+    inventory_data = {}
+    for item in inventario.each():
+        item_data = item.val()
+        inventory_data[item_data['codigo']] = item_data['precio'] * item_data['estado']['9 de Octubre']['stock']
+
+    # Realizamos el análisis ABC
+    # Realizamos una sumatoria del total del costo del inventario
+    total_value = sum(inventory_data.values())
+    #Ordenamos los datos de manera descendente, lo usaremos en el grafico de valor de producto
+    inventory_items = sorted(inventory_data.items(), key=lambda x: x[1], reverse=True)
+
+    # Segun la formula del análsiis ABC para determinar en qué rango de porcentaje del valor acumulativo total se encuentra se usa lo siguiente:
+    cumulative_value = 0
+    abc_analysis = {}
+    for item, value in inventory_items:
+        cumulative_value += value
+        if cumulative_value / total_value <= 0.8:
+            abc_analysis[item] = 'A'
+        elif cumulative_value / total_value <= 0.95:
+            abc_analysis[item] = 'B'
+        else:
+            abc_analysis[item] = 'C'
+
+    #Valores acumulados para grafica de tendencia
+    cumulative_values = [sum([value for item, value in inventory_items][:i+1]) for i in range(len(inventory_items))]
+    result = list(zip(range(len(inventory_data)), cumulative_values))
+
+    category_start = 0
+
+    #Envio los detalles de las secciones del grafico de tendencia
+    rectangles = []
+    for i in range(1, len(inventory_items)):
+        if abc_analysis[inventory_items[i][0]] != abc_analysis[inventory_items[i-1][0]]:
+            bottom_left = (category_start-0.4, cumulative_values[category_start])
+            top_right = (i+0.4, cumulative_values[i-1])
+            rectangles.append((bottom_left, top_right))
+            category_start = i
+    bottom_left = (category_start-0.4, cumulative_values[category_start])
+    top_right = (len(inventory_items)-0.6, cumulative_values[-1])
+    rectangles.append((bottom_left, top_right))
+
+    print(abc_analysis)
+
+    return jsonify(abc_analysis)
 
 
 #-----------------------------------------Filttrado de salidas-----------------------------------------------------
