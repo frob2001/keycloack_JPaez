@@ -372,13 +372,11 @@ def salidas():
     
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
-        # Obtener los datos de ventas de la sucursal seleccionada según tu lógica
         ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
         return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
     else:
        sucursal_seleccionada = "9 de Octubre"
        ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-       print(ventas)
        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
 
 @app.route('/crear_salida/<string:sucursal_seleccionada>', methods=['GET', 'POST'])
@@ -388,7 +386,7 @@ def crear_salida(sucursal_seleccionada):
       documento = request.form["documento"].upper()
       fecha = request.form["fecha"]
 
-      sucursal = request.form.get('sucursal', 'N/A').upper()
+      sucursal = request.form.get('sucursal', 'N/A')
       
       cliente = request.form.get('cliente', 'N/A').upper()
 
@@ -426,14 +424,37 @@ def crear_salida(sucursal_seleccionada):
                         nuevo_stock = stock_actual - cantidad
                         estado[sucursal_seleccionada]["stock"] = nuevo_stock
                         fdb.child("Inventario").child(producto_key).child("estado").set(estado)
-
-
+        
+      if cliente == 'N/A':
+        envio = "PENDIENTE"
+        recibidos = []
+        print(len(cantidades))
+        for i in range (0, len(cantidades)):
+           recibidos.append("No")
+        print(recibidos)
+        fdb.child("Entradas_Sucursal").child(sucursal).push({
+            "documento": documento,
+            "fecha": fecha,
+            "sucursal_envio": sucursal_seleccionada,
+            "envio": envio,
+            "tipo_pago": tipo_pago,
+            "productos": productos,
+            "recibidos": recibidos,
+            "cantidades": cantidades,
+            "precio": precios,
+            "total": total,
+            "descuento": descuento,
+            "comentario": ""
+        }) 
+      else:
+        envio = "RECIBIDO"
 
       fdb.child("Salidas").child(sucursal_seleccionada).push({
         "documento": documento,
         "fecha": fecha,
         "cliente": cliente,
-        "sucursal": sucursal,
+        "sucursal": sucursal.upper(),
+        "envio": envio,
         "tipo_pago": tipo_pago,
         "productos": productos,
         "cantidades": cantidades,
@@ -710,7 +731,7 @@ def crear_devolucion(sucursal_seleccionada):
       documento = request.form["documento"].upper()
       fecha = request.form["fecha"]
       funcion = request.form['radio'].upper()
-      if funcion == "funcional":
+      if funcion == "FUNCIONAL":
          motivo = request.form['funcional']
       else:
          motivo = request.form['nofuncional']
@@ -718,7 +739,7 @@ def crear_devolucion(sucursal_seleccionada):
 
       total = request.form["totalgeneral"].upper()
       producto = request.form["productocodigo"]
-      cantidad = request.form["cantidadproducto"]
+      cantidad = int(request.form["cantidadproducto"])
       precio = request.form["precioproducto"]
       total = request.form["totalgeneral"].upper()
 
@@ -730,7 +751,7 @@ def crear_devolucion(sucursal_seleccionada):
 
       inventario = fdb.child("Inventario").get().val()
         
-      if funcion == "funcional":
+      if funcion == "FUNCIONAL":
         if inventario != None:
             for producto_key, producto_data in inventario.items():
                if producto_data["codigo"] == producto_codigo:
@@ -753,14 +774,15 @@ def crear_devolucion(sucursal_seleccionada):
         "total": total     
       })
       flash("La salida se ha creado")
-      return redirect(url_for('salidas'))
+      return redirect(url_for('entradas_devolucion'))
     
     else:
       productos = {}
       datos = fdb.child("Inventario").get().val()
+      print(datos)
       for producto in datos.values():
           sucursal_info = producto["estado"]
-          estado = sucursal_info["sucursal_seleccionada"]
+          estado = sucursal_info[sucursal_seleccionada]
           stock = estado["stock"]
           oems=[]
           for data in producto['oems'].values():
@@ -769,6 +791,90 @@ def crear_devolucion(sucursal_seleccionada):
           productos[producto["codigo"]] = [oems, producto["descripcion"], stock, producto["precio"]]
         
       return render_template("agregar_devolucion.html", productos=productos, sucursal_seleccionada=sucursal_seleccionada)
+    
+
+
+@app.route('/detalles_devolucion/<string:sucursal_seleccionada>/<string:key>', methods=['GET', 'POST'])
+@login_required
+def detalles_devolucion(sucursal_seleccionada, key):
+    devolucion = fdb.child('Entradas_Devolucion').child(sucursal_seleccionada).child(key).get().val()
+    print(devolucion)
+    return render_template('detalles_devolucion.html', key=key, devolucion=devolucion, sucursal_seleccionada=sucursal_seleccionada)
+
+
+@app.route('/eliminar_devolucion/<string:sucursal_seleccionada>/<string:key>')
+@login_required
+def eliminar_devolucion(sucursal_seleccionada, key):
+    llave = key
+    devolucion = fdb.child('Entradas_Devolucion').child(sucursal_seleccionada).child(llave).get().val()
+    inventario = fdb.child('Inventario').get().val()
+
+    print(inventario)
+
+    producto = devolucion['producto']
+    cantidad = devolucion['cantidad']
+
+    if inventario != None:
+        producto_codigo = producto.split(':')[0]
+
+        if devolucion['funcional'] == "FUNCIONAL":
+            for key, producto in inventario.items():
+                if producto['codigo'] == producto_codigo:
+                    producto['estado'][sucursal_seleccionada]['stock'] -= cantidad
+                    break
+        fdb.child('Inventario').set(inventario)
+
+    fdb.child('Entradas_Devolucion').child(sucursal_seleccionada).child(llave).remove()
+
+    flash("El producto se ha sido eliminado con éxito")
+    return redirect(url_for('entradas_devolucion'))
+
+
+
+#-----------------------------------------ENTRADAS POR SUCURSAL-----------------------------------------------
+
+@app.route("/entradas_sucursal/", methods=['GET', 'POST'])
+@login_required
+def entradas_sucursal():
+    datos = fdb.child("Sucursales").get().val()
+    nombres = [sucursal['nombre'] for sucursal in datos.values()]
+    
+    if request.method == 'POST':
+        sucursal_seleccionada = request.form['sucursal']
+        # Obtener los datos de ventas de la sucursal seleccionada según tu lógica
+        entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
+        print(entradas)
+        return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
+    else:
+       sucursal_seleccionada = "9 de Octubre"
+       entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
+       print(entradas)
+       return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
+
+@app.route('/detalles_entradas_sucursal/<string:sucursal_seleccionada>/<string:key>', methods=['GET', 'POST'])
+@login_required
+def detalles_entradas_sucursal(sucursal_seleccionada, key):
+    entradas = fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).get().val()
+
+    inventario = fdb.child("Inventario").get().val()
+    ubicaciones = {}
+    for i, producto in enumerate(entradas['productos']):
+        codigo_producto = producto.split(":")[0]
+        cantidad = entradas['cantidades'][i]
+        recibido = entradas['recibidos'][i]
+        for key, value in inventario.items():
+            if value['codigo'] == codigo_producto:
+                descripcion = value['descripcion']
+                ubicacion = value['estado'][sucursal_seleccionada]['ubicacion']
+                ubicacion_especifica = value['estado'][sucursal_seleccionada]['ubicacionespecifica']
+                ubicaciones[codigo_producto] = {'recibido': recibido,'cantidad': cantidad, 'descripcion': descripcion, 'ubicacion': ubicacion, 'ubicacion_especifica': ubicacion_especifica}
+                break
+    print(ubicaciones)
+
+
+
+    return render_template('detalles_entradas_sucursal.html', key=key, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, ubicaciones=ubicaciones)
+#HOLALOLA
 
 
 #-----------------------------------------ANALISIS ABC CORE-----------------------------------------------------

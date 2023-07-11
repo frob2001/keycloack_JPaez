@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block title %} Detalle salida {% endblock %}
+{% block title %} Detalle devolución {% endblock %}
 
 
 {% block body %}
@@ -108,8 +108,8 @@
     </style>
 
     <div style="margin-bottom: 10px;">
-        <h1 class="text-light">{{ salida['documento'] }}</h1>
-        <a href="{{ url_for('salidas') }}"> 
+        <h1 class="text-light">{{ devolucion['documento'] }}</h1>
+        <a href="{{ url_for('entradas_devolucion') }}"> 
             <button class="btn btn-lightGray">Cancelar</button>
         </a>
     </div>
@@ -132,24 +132,17 @@
     <div class="left">
     
     <h1 style="color: #FFFFFF; font-size:x-large;">Total</h1>
-    <p style="color: #FFFFFF;">{{ salida['total'] }}</p>
-    
-    <h1 style="color: #FFFFFF; font-size:x-large;">Descuento</h1>
-    <p style="color: #FFFFFF;">{{ salida['descuento'] }}%</p>
+    <p style="color: #FFFFFF;">{{ devolucion['total'] }}</p>
     
     <h1 style="color: #FFFFFF; font-size:x-large;">Fecha</h1>
-    <p style="color: #FFFFFF;">{{ salida['fecha'] }}</p>
+    <p style="color: #FFFFFF;">{{ devolucion['fecha'] }}</p>
 
-    {% if salida['cliente'] == "N/A" %}
-        <h1 style="color: #FFFFFF; font-size:x-large;">Sucursal</h1>
-        <p style="color: #FFFFFF;">{{ salida['sucursal'] }}</p>
-        
-        <h1 style="color: #FFFFFF; font-size:x-large;">Estado</h1>
-        <p style="color: #FFFFFF;">{{ salida['envio'] }}</p>
-    {% else %}
-        <h1 style="color: #FFFFFF; font-size:x-large;">Cliente</h1>
-        <p style="color: #FFFFFF;">{{ salida['cliente'] }}</p>
-    {% endif %}
+    <h1 style="color: #FFFFFF; font-size:x-large;">Funcional</h1>
+    <p style="color: #FFFFFF;">{{ devolucion['funcional'] }}</p>
+
+    <h1 style="color: #FFFFFF; font-size:x-large;">Motivo</h1>
+    <p style="color: #FFFFFF;">{{ devolucion['motivo'] }}</p>
+    
     </div>
 
     <table class="table table-striped table-bordered" id="example">
@@ -161,17 +154,15 @@
           </tr>
         </thead>
         <tbody>
-          {% for index in range(salida['productos']|length) %}
           <tr>
-            <td>{{ salida['productos'][index] }}</td>
-            <td>{{ salida['cantidades'][index] }}</td>
-            <td>{{ salida['precio'][index] }}</td>
+            <td>{{ devolucion['producto'] }}</td>
+            <td>{{ devolucion['cantidad'] }}</td>
+            <td>{{ devolucion['precio'] }}</td>
           </tr>
-          {% endfor %}
         </tbody>
     </table>
     
-    <a href="/eliminar_salida/{{ sucursal_seleccionada }}/{{ key }}" onclick="return confirm('¿Seguro deseas eliminar? *Los stocks de cada producto se sumarán*')"> 
+    <a href="/eliminar_devolucion/{{ sucursal_seleccionada }}/{{ key }}" onclick="return confirm('¿Seguro deseas eliminar? *Los stocks de cada producto se restarán*')"> 
         <button class="btn btn-danger">
             Eliminar
         </button>

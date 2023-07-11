@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Detalle entrada por sucursal {% endblock %}
+
+
+{% block body %}
+
+    <style>
+
+        .btn-lightGray
+        {
+            
+            cursor: pointer;
+            outline: 0;
+            color: #FFFFFF;
+            background-color: #787878;
+            border-color: #787878;
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: center;
+            border: 1px solid transparent;
+            padding: 6px 12px;
+            font-size: 16px;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
+        }
+
+        .btn-lightGray:hover {
+            color: #fff;
+            background-color: #494949;
+            border-color: #494949;          
+        }
+
+    
+        
+    /*Izq der*/
+
+        .details {
+            width: 80%;
+            margin: 0 auto;
+        }
+            
+        .left, .right {
+          width: 50%;
+        }
+        
+        .left {
+          float: left;
+        }
+        
+        .right {
+          margin-bottom: 20px;
+          float: right;
+          border-radius: 5px;
+          padding: 15px;
+        }
+        
+        h1, p {
+          width: 80%;
+        }
+    
+        .right h1, p {
+          width: 100%;
+        }
+        .right h1, p {
+          width: 100%;
+        }
+        
+        @media (max-width: 600px) {
+          .left, .right {
+            width: 100%;
+            float: none;
+          }
+        }
+    </style>
+
+<div style="margin-bottom: 10px;">
+    <h1 class="text-light">{{ entradas['documento'] }}</h1>
+    <a href="{{ url_for('entradas_sucursal') }}"> 
+        <button class="btn btn-lightGray">Cancelar</button>
+    </a>
+</div>
+
+<br>
+
+<div class="details"> 
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-dark" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+<div class="left">
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Fecha</h1>
+<p style="color: #FFFFFF;">{{ entradas['fecha'] }}</p>
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Descuento</h1>
+<p style="color: #FFFFFF;">{{ entradas['descuento'] }}%</p>
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Estado</h1>
+<p style="color: #FFFFFF;">{{ entradas['envio'] }}</p>
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Sucursal de envio</h1>
+<p style="color: #FFFFFF;">{{ entradas['sucursal_envio'] }}</p>
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Sucursal de Recepción</h1>
+<p style="color: #FFFFFF;">{{ sucursal_seleccionada }}</p>
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Tipo de pago</h1>
+<p style="color: #FFFFFF;">{{ entradas['tipo_pago'] }}</p>
+
+<h1 style="color: #FFFFFF; font-size:x-large;">Total</h1>
+<p style="color: #FFFFFF;">{{ entradas['total'] }}</p>
+
+</div>
+
+
+  {% for codigo_producto, info in ubicaciones.items() %}
+  <h3 style="color: #FFFFFF; font-size:x-large;">{{ codigo_producto }}: {{ info.descripcion }}</h3>
+  <div class="right" style="background-color: black;">
+
+      <input type="checkbox" {% if info.recibido == "Si" %} checked {% endif %} >
+    
+      <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
+      <input type="text" class="form-control" name="" value="{{ info.ubicacion }}">
+  
+      <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación especifica</h1>
+      <input type="text" class="form-control" name="" value="{{ info.ubicacion_especifica }}">
+
+      <h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
+      <input type="text" class="form-control" name="" value="{{ info.cantidad }}">
+  </div>
+  {% endfor %}
+
+  <label style="color: #FFFFFF;">Comentario</label>
+  <br>
+  <textarea type="text" class="form-control" id="nofuncional" name="comentario" value="{{ entradas['comentario'] }}"></textarea>
+  <br>    
+
+
+
+
+{% endblock %}

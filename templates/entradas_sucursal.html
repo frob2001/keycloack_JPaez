@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block title %} Entradas por devolución {% endblock %}
+{% block title %} Entradas sucursal {% endblock %}
 
 
 {% block body %}
@@ -153,12 +153,7 @@
 
 <div class="row">
     <div class="col-sm-12 col-md-6">
-        <h1 class="text-light">Entradas por devolución</h1>
-    </div>
-    <div class="col-sm-12 col-md-6" id="createbutton">
-        <a href="/crear_devolucion/{{ sucursal_seleccionada }}">
-            <button class="btn btn-lightGray float-end">Generar devolución</button>
-        </a>
+        <h1 class="text-light">Entradas sucursal</h1>
     </div>
 </div>
 
@@ -172,7 +167,7 @@
     {% endif %}
 {% endwith %}
 
-<form action="{{ url_for('entradas_devolucion') }}" method="POST">
+<form action="{{ url_for('entradas_sucursal') }}" method="POST">
     <div class="form-group">
         <select class="form-control dropdown" id="sucursal" name="sucursal">
             {% if nombres %}
@@ -191,27 +186,37 @@
             <tr>
                 <th class="header">No. Documento</th>
                 <th class="header">Fecha</th>
-                <th class="header">Producto</th>
-                <th class="header">Cantidad</th>
-                <th class="header">Funcional</th>
-                <th class="header">Motivo</th>
+                <th class="header">Productos</th>
+                <th class="header">Cantidades</th>
                 <th class="header">Total</th>
+                <th class="header">Sucursal de envio</th>
+                <th class="header">Estado</th>
                 <th><h2>Detalles</h2></th>
             </tr>
         </thead>
         <tbody>
-            {% if ventas %}
-                {% for key, venta in ventas.items() %}
+            {% if entradas %}
+                {% for key, entrada in entradas.items() %}
                     <tr>
-                        <td class="data">{{ venta['documento'] }}</td>
-                        <td class="data">{{ venta['fecha'] }}</td>
-                        <td class="data">{{ venta['producto'] }}</td>
-                        <td class="data">{{ venta['cantidad'] }}</td>
-                        <td class="data">{{ venta['funcional'] }}</td>
-                        <td class="data">{{ venta['motivo'] }}</td>
-                        <td class="data">{{ venta['total'] }}</td>
+                        <td class="data">{{ entrada['documento'] }}</td>
+                        <td class="data">{{ entrada['fecha'] }}</td>
+                        <td class="data">
+                            {% for producto in entrada['productos'] %}
+                                {{ producto }}<br>
+                            {% endfor %}
+                        </td>
+                        <td class="data">
+                            {% for producto in entrada['cantidades'] %}
+                                {{ producto }}<br>
+                            {% endfor %}
+                        </td>
+                        <td class="data">{{ entrada['total'] }}</td>
+                        <td class="data">{{ entrada['sucursal_envio'] }}</td>
+
+                        <td class="data">{{ entrada['envio'] }}</td>
+
                         <td>
-                            <a href="/detalles_devolucion/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                            <a href="/detalles_entradas_sucursal/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
                         </td>
                     </tr>
                 {% endfor %}

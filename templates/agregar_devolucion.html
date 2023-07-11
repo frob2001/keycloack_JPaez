@@ -204,6 +204,12 @@
   
 
   function validarFormulario() {
+    var productosAgregados = document.querySelectorAll('.producto-agregado');
+    if (productosAgregados.length === 0) {
+      alert('Debes agregar al menos un producto');
+      return false;
+    }
+
     var radios = document.getElementsByName('radio');
     var seleccionado = false;
 
@@ -275,18 +281,13 @@
     var stockActual = parseInt(filaProducto.cells[5].textContent);
   
     // Restar la cantidad ingresada al stock actual
-    var stockDespuesResta = stockActual - parseInt(cantidad);
-  
-    if (stockDespuesResta < 0) {
-      alert('No puedes ingresar una cantidad mayor al stock disponible');
-      return false;
-    }
+    var stockDespuesResta = stockActual + parseInt(cantidad);
   
     // Actualizar el valor del stock en la tabla
     filaProducto.cells[5].textContent = stockDespuesResta;
   
     // Resaltar el nuevo valor del stock en color rojo
-    filaProducto.cells[5].style.color = 'red';
+    filaProducto.cells[5].style.color = 'green';
   
     var precio = parseFloat(filaProducto.cells[4].textContent);
   
@@ -389,19 +390,32 @@
       var stockActual = parseInt(filaProducto.cells[5].textContent);
   
       // Sumar la cantidad ingresada al stock actual
-      var stockDespuesSuma = stockActual + cantidadProducto;
+      var stockDespuesSuma = stockActual - cantidadProducto;
   
       // Actualizar el valor del stock en la tabla
       filaProducto.cells[5].textContent = stockDespuesSuma;
   
       // Resaltar el nuevo valor del stock en color negro
       filaProducto.cells[5].style.color = 'black'; 
+
+      // Obtengo referencia del boton de agregar
+      var btnAgregar = document.getElementById("btnAgregar");
+
+      // Oculta el botón cambiando el estilo display a "none"
+      btnAgregar.style.display = "block";
+
       actualizarTotalGeneral();
       eliminarElemento(nuevoDiv);
     };
     actualizarTotalGeneral();
     // Agregar el botón de eliminar al nuevo div
     nuevoDiv.appendChild(botonEliminar);
+
+    // Obtengo referencia del boton de agregar
+    var btnAgregar = document.getElementById("btnAgregar");
+
+    // Oculta el botón cambiando el estilo display a "none"
+    btnAgregar.style.display = "none";
   }
   
 
@@ -485,7 +499,7 @@
 
 <body>
 
-<form action="/crear_salida/{{ sucursal_seleccionada }}" method="post" onsubmit="return validarFormulario()">
+<form action="/crear_devolucion/{{ sucursal_seleccionada }}" method="post" onsubmit="return validarFormulario()">
   <div class="left">
     <label style="color: #FFFFFF;">No. Documento</label>
     <input type="text" class="form-control documento" id="documento" name="documento" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" required>
@@ -497,7 +511,7 @@
 
     <br>
 
-    <button type="button" class="btn btn-lightGray" data-toggle="modal" data-target="#myModal">
+    <button type="button" id="btnAgregar" class="btn btn-lightGray" data-toggle="modal" data-target="#myModal">
         Agregar producto
     </button>
 

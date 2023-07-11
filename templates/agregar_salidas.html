@@ -515,7 +515,7 @@
       <input type="hidden" name="totalgeneral" value="0.00">
 
       <div style="display: flex; align-items: center; margin-left: auto;">
-        <input type="number" style="width: auto-20px; margin-left: 20px;" class="form-control documento" id="descuento" name="descuento" pattern="^(100|[1-9]?[0-9])$" title="Número del 0 al 100" required oninput="aplicarDescuento()">
+        <input type="number" style="width: auto-20px; margin-left: 20px;" class="form-control documento" id="descuento" name="descuento" pattern="^(100|[1-9]?[0-9])$" title="Número del 0 al 100" required oninput="aplicarDescuento()" value="0">
  
         <p style="margin-left: 5px; margin-bottom: 0px;">%</p>
       </div>
@@ -529,17 +529,19 @@
     <input type="radio" name="radio" onclick="activarInput('cliente')"> 
     <label style="color: #FFFFFF;">Cliente</label>
     <br>
-    <input type="text" class="form-control" id="cliente" name="cliente" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled>
+    <input type="text" class="form-control" id="cliente" name="cliente" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled required>
 
     <br>
     <input type="radio" name="radio" onclick="activarInput('sucursal')">
     <label style="color: #FFFFFF;">Sucursal</label>
     <div class="form-group">
-        <select class="form-control" id="sucursal" name="sucursal" disabled>
+        <select class="form-control" id="sucursal" name="sucursal" disabled required>
             <option></option>
             {% if nombres %}
                 {% for nombre in nombres %}
-                    <option value="{{ nombre }}">{{ nombre }}</option>
+                    {% if nombre !=  sucursal_seleccionada %}
+                      <option value="{{ nombre }}">{{ nombre }}</option>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         </select>        

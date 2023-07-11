@@ -187,6 +187,12 @@
 
 <script>
   function validarFormulario() {
+    var productosAgregados = document.querySelectorAll('.producto-agregado');
+    if (productosAgregados.length === 0) {
+      alert('Debes agregar al menos un producto');
+      return false;
+    }
+    
     var radios = document.getElementsByName('radio');
     var seleccionado = false;
 
