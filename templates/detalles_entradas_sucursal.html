@@ -67,11 +67,17 @@
         .right h1, p {
           width: 100%;
         }
+        .left textarea{
+          width: 80%;
+        }
         
         @media (max-width: 600px) {
           .left, .right {
             width: 100%;
             float: none;
+          }
+          .left textarea{
+            width: 100%;
           }
         }
     </style>
@@ -121,30 +127,35 @@
 <h1 style="color: #FFFFFF; font-size:x-large;">Total</h1>
 <p style="color: #FFFFFF;">{{ entradas['total'] }}</p>
 
-</div>
+<form action="/detalles_entradas_sucursal/{{ sucursal_seleccionada }}/{{ llave }}" method="post">
 
+<label style="color: #FFFFFF;">Comentario</label>
+<textarea rows="10" type="text" class="form-control" id="comentario" name="comentario">{{ entradas['comentario'] }}</textarea>
+<br>
+<br>
+</div>
 
   {% for codigo_producto, info in ubicaciones.items() %}
   <h3 style="color: #FFFFFF; font-size:x-large;">{{ codigo_producto }}: {{ info.descripcion }}</h3>
+  <input id="codigo" name="codigo" type="hidden" value={{ codigo_producto }}>
   <div class="right" style="background-color: black;">
 
-      <input type="checkbox" {% if info.recibido == "Si" %} checked {% endif %} >
+      <input type="checkbox" name="checkbox_{{codigo_producto}}" {% if info.recibido == "Si" %} checked {% endif %} >
     
       <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
-      <input type="text" class="form-control" name="" value="{{ info.ubicacion }}">
+      <input type="text" class="form-control" name="ubicacion" value="{{ info.ubicacion }}">
   
       <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación especifica</h1>
-      <input type="text" class="form-control" name="" value="{{ info.ubicacion_especifica }}">
+      <input type="text" class="form-control" name="ubicacionespecifica" value="{{ info.ubicacion_especifica }}">
 
       <h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
-      <input type="text" class="form-control" name="" value="{{ info.cantidad }}">
+      <input type="text" class="form-control" name="stock" value="{{ info.cantidad }}">
   </div>
   {% endfor %}
 
-  <label style="color: #FFFFFF;">Comentario</label>
-  <br>
-  <textarea type="text" class="form-control" id="nofuncional" name="comentario" value="{{ entradas['comentario'] }}"></textarea>
-  <br>    
+  <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
+</form>
+  
 
 
 

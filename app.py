@@ -854,28 +854,47 @@ def entradas_sucursal():
 @app.route('/detalles_entradas_sucursal/<string:sucursal_seleccionada>/<string:key>', methods=['GET', 'POST'])
 @login_required
 def detalles_entradas_sucursal(sucursal_seleccionada, key):
-    entradas = fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).get().val()
+    if request.method == 'POST':
+       print(key)
+       codigos = request.form.getlist("codigo")
+       ubicacion = request.form.getlist("ubicacion")
+       ubicacion_especifica = request.form.getlist("ubicacionespecifica")
+       stock = request.form.getlist("stock")
+       checkbox_values = []
+       for i in codigos:
+          value = request.form.get(f"checkbox_{i}")
+          if value:
+            checkbox_values.append("Si")
+          else:
+            checkbox_values.append("No")
+        
+       if "No" in checkbox_values:
+          estado = "INCOMPLETO"
+       else:
+          estado = "RECIBIDO"
 
-    inventario = fdb.child("Inventario").get().val()
-    ubicaciones = {}
-    for i, producto in enumerate(entradas['productos']):
-        codigo_producto = producto.split(":")[0]
-        cantidad = entradas['cantidades'][i]
-        recibido = entradas['recibidos'][i]
-        for key, value in inventario.items():
-            if value['codigo'] == codigo_producto:
-                descripcion = value['descripcion']
-                ubicacion = value['estado'][sucursal_seleccionada]['ubicacion']
-                ubicacion_especifica = value['estado'][sucursal_seleccionada]['ubicacionespecifica']
-                ubicaciones[codigo_producto] = {'recibido': recibido,'cantidad': cantidad, 'descripcion': descripcion, 'ubicacion': ubicacion, 'ubicacion_especifica': ubicacion_especifica}
-                break
-    print(ubicaciones)
-
-
-
-    return render_template('detalles_entradas_sucursal.html', key=key, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, ubicaciones=ubicaciones)
-#HOLALOLA
-
+       comentario = request.form['comentario']
+       fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).update({"comentario": comentario, "recibidos": checkbox_values, "envio":estado})
+       #data = {'codigos': codigos,'ubicacion': ubicacion,'ubicacion_especifica': ubicacion_especifica,'checkbox': checkbox_values,'comentario': comentario}
+       return redirect(url_for('entradas_sucursal'))
+    else:
+        print(key)
+        llave = key
+        entradas = fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).get().val()
+        inventario = fdb.child("Inventario").get().val()
+        ubicaciones = {}
+        for i, producto in enumerate(entradas['productos']):
+            codigo_producto = producto.split(":")[0]
+            cantidad = entradas['cantidades'][i]
+            recibido = entradas['recibidos'][i]
+            for key, value in inventario.items():
+                if value['codigo'] == codigo_producto:
+                    descripcion = value['descripcion']
+                    ubicacion = value['estado'][sucursal_seleccionada]['ubicacion']
+                    ubicacion_especifica = value['estado'][sucursal_seleccionada]['ubicacionespecifica']
+                    ubicaciones[codigo_producto] = {'recibido': recibido,'cantidad': cantidad, 'descripcion': descripcion, 'ubicacion': ubicacion, 'ubicacion_especifica': ubicacion_especifica}
+                    break
+        return render_template('detalles_entradas_sucursal.html', key=key, llave=llave, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, ubicaciones=ubicaciones)
 
 #-----------------------------------------ANALISIS ABC CORE-----------------------------------------------------
 
