@@ -854,6 +854,8 @@ def entradas_sucursal():
 @app.route('/detalles_entradas_sucursal/<string:sucursal_seleccionada>/<string:key>', methods=['GET', 'POST'])
 @login_required
 def detalles_entradas_sucursal(sucursal_seleccionada, key):
+    entradas = fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).get().val()
+    inventario = fdb.child("Inventario").get().val()
     if request.method == 'POST':
        print(key)
        codigos = request.form.getlist("codigo")
@@ -875,13 +877,23 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
 
        comentario = request.form['comentario']
        fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).update({"comentario": comentario, "recibidos": checkbox_values, "envio":estado})
+       for i, producto in enumerate(entradas['productos']):
+            codigo_producto = producto.split(":")[0]
+            for key, value in inventario.items():
+                if value['codigo'] == codigo_producto:
+                    if checkbox_values[i] == "Si":
+                       nuevo_stock = int(stock[i]) + int(value['estado'][sucursal_seleccionada]['stock'])
+                    else:
+                       nuevo_stock = int(value['estado'][sucursal_seleccionada]['stock'])
+                       stock_envio = fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).child('stock').get().val()
+                       fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).update({"stock":int(stock_envio)+int(stock[i])})
+
+                    fdb.child('Inventario').child(key).child('estado').child(sucursal_seleccionada).update({"stock": nuevo_stock})
        #data = {'codigos': codigos,'ubicacion': ubicacion,'ubicacion_especifica': ubicacion_especifica,'checkbox': checkbox_values,'comentario': comentario}
        return redirect(url_for('entradas_sucursal'))
     else:
         print(key)
         llave = key
-        entradas = fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).get().val()
-        inventario = fdb.child("Inventario").get().val()
         ubicaciones = {}
         for i, producto in enumerate(entradas['productos']):
             codigo_producto = producto.split(":")[0]
