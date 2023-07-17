@@ -89,6 +89,25 @@
 
 <div style="margin-bottom: 10px;">
     <h1 class="text-light">{{ entradas['documento'] }}</h1>
+    {% if entradas['envio'] == "RECIBIDO" %}
+    <div style="border: 1px solid green; border-radius: 5px; display: inline-block;">
+        <p style="color: green; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+    </div>
+    {% elif entradas['envio'] == "INCOMPLETO" %}
+    <div style="border: 1px solid red; border-radius: 5px; display: inline-block;">
+        <p style="color: red; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+    </div>
+    {% elif entradas['envio'] == "PENDIENTE" %}
+    <div style="border: 1px solid orange; border-radius: 5px; display: inline-block;">
+        <p style="color: orange; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+    </div>
+    {% else %}
+    <div style="border: 1px solid #FFFFFF; border-radius: 5px; display: inline-block;">
+        <p style="color: #FFFFFF; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+    </div>
+    {% endif %}
+    <br>
+    <br>
     <a href="{{ url_for('entradas_sucursal') }}"> 
         <button class="btn btn-lightGray">Cancelar</button>
     </a>
@@ -116,28 +135,6 @@
 
 <h1 style="color: #FFFFFF; font-size:x-large;">Descuento</h1>
 <p style="color: #FFFFFF;">{{ entradas['descuento'] }}%</p>
-
-<div class="envio-status">
-     
-  {% if entradas['envio'] == "RECIBIDO" %}
-  <div style="border: 1px solid green; border-radius: 5px; display: inline-block;">
-      <p style="color: green; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
-  </div>
-  {% elif entradas['envio'] == "INCOMPLETO" %}
-  <div style="border: 1px solid red; border-radius: 5px; display: inline-block;">
-      <p style="color: red; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
-  </div>
-  {% elif entradas['envio'] == "PENDIENTE" %}
-  <div style="border: 1px solid orange; border-radius: 5px; display: inline-block;">
-      <p style="color: orange; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
-  </div>
-  {% else %}
-  <div style="border: 1px solid #FFFFFF; border-radius: 5px; display: inline-block;">
-      <p style="color: #FFFFFF; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
-  </div>
-  {% endif %}
-
-</div>
 
 <h1 style="color: #FFFFFF; font-size:x-large;">Sucursal de envio</h1>
 <p style="color: #FFFFFF;">{{ entradas['sucursal_envio'] }}</p>
