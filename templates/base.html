@@ -37,9 +37,11 @@
           <li class="active" >
             <a href="#homeSubmenu" style="color: white; text-decoration: none;" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Entradas</a>
             <ul class="collapse list-unstyled" id="homeSubmenu">
+              {% if session["role"] == "Administrador" %}
                 <li class="lisubmenu">
                   <a style="color: white; text-decoration: none;" href="/entradas_compras/">Entradas por compras</a>
                 </li>
+              {% endif %}
                 <li class="lisubmenu">
                   <a style="color: white; text-decoration: none;" href="/entradas_devolucion/">Entradas por devolución</a>
                 </li>
@@ -48,12 +50,14 @@
                 </li>
             </ul>
          </li>
+         {% if session["role"] == "Administrador" %}
           <li>
               <a style="color: white; text-decoration: none;" href="/sucursales/">Sucursales</a>
           </li>
           <li>
               <a style="color: white; text-decoration: none;" href="/usuarios/">Usuarios</a>
           </li>
+          {% endif %}
           <li>
               <a style="color: white; text-decoration: none;"s href="/logout">Logout</a>
           </li>

@@ -70,6 +70,11 @@
         .left textarea{
           width: 80%;
         }
+        .envio-status {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+      }
         
         @media (max-width: 600px) {
           .left, .right {
@@ -112,8 +117,27 @@
 <h1 style="color: #FFFFFF; font-size:x-large;">Descuento</h1>
 <p style="color: #FFFFFF;">{{ entradas['descuento'] }}%</p>
 
-<h1 style="color: #FFFFFF; font-size:x-large;">Estado</h1>
-<p style="color: #FFFFFF;">{{ entradas['envio'] }}</p>
+<div class="envio-status">
+     
+  {% if entradas['envio'] == "RECIBIDO" %}
+  <div style="border: 1px solid green; border-radius: 5px; display: inline-block;">
+      <p style="color: green; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+  </div>
+  {% elif entradas['envio'] == "INCOMPLETO" %}
+  <div style="border: 1px solid red; border-radius: 5px; display: inline-block;">
+      <p style="color: red; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+  </div>
+  {% elif entradas['envio'] == "PENDIENTE" %}
+  <div style="border: 1px solid orange; border-radius: 5px; display: inline-block;">
+      <p style="color: orange; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+  </div>
+  {% else %}
+  <div style="border: 1px solid #FFFFFF; border-radius: 5px; display: inline-block;">
+      <p style="color: #FFFFFF; font-size: 12px; margin: 5px;">{{ entradas['envio'] }}</p>
+  </div>
+  {% endif %}
+
+</div>
 
 <h1 style="color: #FFFFFF; font-size:x-large;">Sucursal de envio</h1>
 <p style="color: #FFFFFF;">{{ entradas['sucursal_envio'] }}</p>
@@ -129,7 +153,7 @@
 
 <form action="/detalles_entradas_sucursal/{{ sucursal_seleccionada }}/{{ llave }}" method="post">
 
-<label style="color: #FFFFFF;">Comentario</label>
+<h1 style="color: #FFFFFF; font-size:x-large;">Comentario</h1>
 <textarea rows="10" type="text" class="form-control" id="comentario" name="comentario">{{ entradas['comentario'] }}</textarea>
 <br>
 <br>

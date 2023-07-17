@@ -26,6 +26,9 @@ def login():
   try:
     user = auth.sign_in_with_email_and_password(email, password)
     session["user"] = user['idToken']
+    user_data = fdb.child("Usuarios").child(user['localId']).get().val()
+    session["role"] = user_data["role"]
+    print(session["role"])
     return redirect(url_for('inventario'))
   except:
     return render_template('login.html', message='El correo o la contraseña son incorrectos')
@@ -208,7 +211,6 @@ def inventario():
   sucursales = fdb.child("Sucursales").get().val()
   nombres = [sucursal['nombre'] for sucursal in sucursales.values()]
   datos = fdb.child("Inventario").get().val()
-  print(datos)
   return render_template("inventario.html", datos=datos, nombres=nombres)
 
 @app.route('/verificar_codigo', methods=['POST'])
@@ -373,11 +375,18 @@ def salidas():
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
         ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
     else:
-       sucursal_seleccionada = "9 de Octubre"
-       ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-       return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
+       if session["role"]=="Administrador":
+        sucursal_seleccionada = "9 de Octubre"
+        ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+       else:
+        sucursal_seleccionada = session["role"]
+        ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+
+
 
 @app.route('/crear_salida/<string:sucursal_seleccionada>', methods=['GET', 'POST'])
 @login_required
@@ -717,17 +726,20 @@ def eliminar_entrada_compra(key):
 def entradas_devolucion():
     datos = fdb.child("Sucursales").get().val()
     nombres = [sucursal['nombre'] for sucursal in datos.values()]
-    
+
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
-        # Obtener los datos de ventas de la sucursal seleccionada según tu lógica
         ventas = fdb.child("Entradas_Devolucion").child(sucursal_seleccionada).get().val()
-        return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
+        return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
     else:
-       sucursal_seleccionada = "9 de Octubre"
-       ventas = fdb.child("Entradas_Devolucion").child(sucursal_seleccionada).get().val()
-       print(ventas)
-       return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
+       if session["role"]=="Administrador":
+          sucursal_seleccionada = "9 de Octubre"
+          ventas = fdb.child("Entradas_Devolucion").child(sucursal_seleccionada).get().val()
+          return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+       else:
+          sucursal_seleccionada = session["role"]
+          ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
+          return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
 
 @app.route('/crear_devolucion/<string:sucursal_seleccionada>', methods=['GET', 'POST'])
 @login_required
@@ -846,15 +858,20 @@ def entradas_sucursal():
     
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
-        # Obtener los datos de ventas de la sucursal seleccionada según tu lógica
         entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
-        print(entradas)
-        return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
+        return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, session=session["role"])
     else:
-       sucursal_seleccionada = "9 de Octubre"
-       entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
-       print(entradas)
-       return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
+       if session["role"]=="Administrador":
+          sucursal_seleccionada = "9 de Octubre"
+          entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
+          return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, session=session["role"])
+       else:
+          sucursal_seleccionada = session["role"]
+          entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
+          return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, session=session["role"])
+          
+    
+
 
 @app.route('/detalles_entradas_sucursal/<string:sucursal_seleccionada>/<string:key>', methods=['GET', 'POST'])
 @login_required

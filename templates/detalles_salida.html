@@ -98,6 +98,12 @@
         table.table-bordered > tbody > tr > td{
             border:1px solid black;
         }
+
+        .envio-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
         
         @media (max-width: 600px) {
           .left, .right {
@@ -141,11 +147,33 @@
     <p style="color: #FFFFFF;">{{ salida['fecha'] }}</p>
 
     {% if salida['cliente'] == "N/A" %}
-        <h1 style="color: #FFFFFF; font-size:x-large;">Sucursal</h1>
-        <p style="color: #FFFFFF;">{{ salida['sucursal'] }}</p>
-        
-        <h1 style="color: #FFFFFF; font-size:x-large;">Estado</h1>
-        <p style="color: #FFFFFF;">{{ salida['envio'] }}</p>
+    <h1 style="color: #FFFFFF; font-size:x-large;">Sucursal</h1>
+    <p style="color: #FFFFFF;">{{ salida['sucursal'] }}</p>
+
+
+    <div class="envio-status">
+     
+        {% if salida['envio'] == "RECIBIDO" %}
+        <div style="border: 1px solid green; border-radius: 5px; display: inline-block;">
+            <p style="color: green; font-size: 12px; margin: 5px;">{{ salida['envio'] }}</p>
+        </div>
+        {% elif salida['envio'] == "INCOMPLETO" %}
+        <div style="border: 1px solid red; border-radius: 5px; display: inline-block;">
+            <p style="color: red; font-size: 12px; margin: 5px;">{{ salida['envio'] }}</p>
+        </div>
+        {% elif salida['envio'] == "PENDIENTE" %}
+        <div style="border: 1px solid orange; border-radius: 5px; display: inline-block;">
+            <p style="color: orange; font-size: 12px; margin: 5px;">{{ salida['envio'] }}</p>
+        </div>
+        {% else %}
+        <div style="border: 1px solid #FFFFFF; border-radius: 5px; display: inline-block;">
+            <p style="color: #FFFFFF; font-size: 12px; margin: 5px;">{{ salida['envio'] }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+
     {% else %}
         <h1 style="color: #FFFFFF; font-size:x-large;">Cliente</h1>
         <p style="color: #FFFFFF;">{{ salida['cliente'] }}</p>
