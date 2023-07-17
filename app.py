@@ -424,32 +424,13 @@ def crear_salida(sucursal_seleccionada):
                         nuevo_stock = stock_actual - cantidad
                         estado[sucursal_seleccionada]["stock"] = nuevo_stock
                         fdb.child("Inventario").child(producto_key).child("estado").set(estado)
-        
-      if cliente == 'N/A':
-        envio = "PENDIENTE"
-        recibidos = []
-        print(len(cantidades))
-        for i in range (0, len(cantidades)):
-           recibidos.append("No")
-        print(recibidos)
-        fdb.child("Entradas_Sucursal").child(sucursal).push({
-            "documento": documento,
-            "fecha": fecha,
-            "sucursal_envio": sucursal_seleccionada,
-            "envio": envio,
-            "tipo_pago": tipo_pago,
-            "productos": productos,
-            "recibidos": recibidos,
-            "cantidades": cantidades,
-            "precio": precios,
-            "total": total,
-            "descuento": descuento,
-            "comentario": ""
-        }) 
-      else:
-        envio = "RECIBIDO"
 
-      fdb.child("Salidas").child(sucursal_seleccionada).push({
+      if cliente == 'N/A':
+         envio = "PENDIENTE"
+      else:
+         envio = "RECIBIDO"
+
+      creada = fdb.child("Salidas").child(sucursal_seleccionada).push({
         "documento": documento,
         "fecha": fecha,
         "cliente": cliente,
@@ -462,6 +443,30 @@ def crear_salida(sucursal_seleccionada):
         "total": total,
         "descuento": descuento
       })
+
+      if cliente == 'N/A':
+        recibidos = []
+        print(len(cantidades))
+        for i in range (0, len(cantidades)):
+           recibidos.append("No")
+        print(recibidos)
+        entrada = fdb.child("Entradas_Sucursal").child(sucursal).push({
+            "documento": documento,
+            "salida": creada['name'],
+            "fecha": fecha,
+            "sucursal_envio": sucursal_seleccionada,
+            "envio": envio,
+            "tipo_pago": tipo_pago,
+            "productos": productos,
+            "recibidos": recibidos,
+            "cantidades": cantidades,
+            "precio": precios,
+            "total": total,
+            "descuento": descuento,
+            "comentario": ""
+        })
+        print(entrada['name'])
+        
       flash("La salida se ha creado")
       return redirect(url_for('salidas'))
     
@@ -877,6 +882,7 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
 
        comentario = request.form['comentario']
        fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).update({"comentario": comentario, "recibidos": checkbox_values, "envio":estado})
+       fdb.child('Salidas').child(entradas['sucursal_envio']).child(entradas['salida']).update({"envio":estado})
        for i, producto in enumerate(entradas['productos']):
             codigo_producto = producto.split(":")[0]
             for key, value in inventario.items():
@@ -889,7 +895,6 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
                        fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).update({"stock":int(stock_envio)+int(stock[i])})
 
                     fdb.child('Inventario').child(key).child('estado').child(sucursal_seleccionada).update({"stock": nuevo_stock})
-       #data = {'codigos': codigos,'ubicacion': ubicacion,'ubicacion_especifica': ubicacion_especifica,'checkbox': checkbox_values,'comentario': comentario}
        return redirect(url_for('entradas_sucursal'))
     else:
         print(key)
