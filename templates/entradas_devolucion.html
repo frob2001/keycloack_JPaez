@@ -174,7 +174,7 @@
 
 <form action="{{ url_for('entradas_devolucion') }}" method="POST">
     <div class="form-group">
-        <select class="form-control dropdown" id="sucursal" name="sucursal" {% if session != "Administrador" %} disabled {% endif %}>
+        <select class="form-control dropdown" id="sucursal" name="sucursal" {% if session["role"] != "Administrador" %} disabled {% endif %}>
             {% if nombres %}
                 {% for nombre in nombres %}
                     <option value="{{ nombre }}" {% if sucursal_seleccionada == nombre %}selected{% endif %}>{{ nombre }}</option>

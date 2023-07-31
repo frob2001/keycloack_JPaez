@@ -375,16 +375,16 @@ def salidas():
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
         ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
     else:
        if session["role"]=="Administrador":
         sucursal_seleccionada = "9 de Octubre"
         ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
        else:
         sucursal_seleccionada = session["role"]
         ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+        return render_template("salidas_ventas.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
 
 
 
@@ -730,16 +730,16 @@ def entradas_devolucion():
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
         ventas = fdb.child("Entradas_Devolucion").child(sucursal_seleccionada).get().val()
-        return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+        return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
     else:
        if session["role"]=="Administrador":
           sucursal_seleccionada = "9 de Octubre"
           ventas = fdb.child("Entradas_Devolucion").child(sucursal_seleccionada).get().val()
-          return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+          return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
        else:
           sucursal_seleccionada = session["role"]
           ventas = fdb.child("Salidas").child(sucursal_seleccionada).get().val()
-          return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada, session = session["role"])
+          return render_template("entradas_devolucion.html", nombres=nombres, ventas=ventas, sucursal_seleccionada=sucursal_seleccionada)
 
 @app.route('/crear_devolucion/<string:sucursal_seleccionada>', methods=['GET', 'POST'])
 @login_required
@@ -859,16 +859,16 @@ def entradas_sucursal():
     if request.method == 'POST':
         sucursal_seleccionada = request.form['sucursal']
         entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
-        return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, session=session["role"])
+        return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
     else:
        if session["role"]=="Administrador":
           sucursal_seleccionada = "9 de Octubre"
           entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
-          return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, session=session["role"])
+          return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
        else:
           sucursal_seleccionada = session["role"]
           entradas = fdb.child("Entradas_Sucursal").child(sucursal_seleccionada).get().val()
-          return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada, session=session["role"])
+          return render_template("entradas_sucursal.html", nombres=nombres, entradas=entradas, sucursal_seleccionada=sucursal_seleccionada)
           
     
 
