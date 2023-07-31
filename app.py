@@ -83,8 +83,13 @@ def actualizar_sucursal(key, nombre):
 def eliminar_sucursal(key, nombre):
     if nombre == "9 de Octubre":
        flash("La sucursal no se puede eliminar, es la sucursal matriz")
-    else:   
+    else:
        fdb.child("Sucursales").child(key).remove()
+       inventario_data = fdb.child("Inventario").get().val()
+       for producto_key in inventario_data.keys():
+        producto_data = inventario_data[producto_key]
+        fdb.child("Inventario").child(producto_key).child('estado').child(nombre).remove()
+       
        flash("La sucursal ha sido eliminada con éxito")
     return redirect(url_for('sucursales'))
 
@@ -96,21 +101,34 @@ def agregar_sucursal():
         direccion = request.form["direccion"]
         nueva_sucursal = {"nombre": nombre, "direccion": direccion}
 
-        #validación, si la sucursal ya existe no se repite, si no hay datos guardados, se compara con la lista nombres = [""]
+        # Validación, si la sucursal ya existe no se repite, si no hay datos guardados, se compara con la lista nombres = [""]
         datos = fdb.child("Sucursales").get().val()
-        nombres= [""]
-        print(datos) #Devuelve none en caso de no tener datos
-        if datos != None:
-           nombres = [d['nombre'] for d in datos.values()]
+        nombres = [""]
+        print(datos) # Devuelve None en caso de no tener datos
+        if datos is not None:
+            nombres = [d['nombre'] for d in datos.values()]
 
-        #Validación, compara los nombres de todos las sucursales en la base de datos
+        # Validación, compara los nombres de todos las sucursales en la base de datos
         if nombre in nombres:
-           return render_template('agregarSucursal.html', message='La sucursal ya existe.')
+            return render_template('agregarSucursal.html', message='La sucursal ya existe.')
         else:
-           fdb.child("Sucursales").push(nueva_sucursal)
-        return redirect(url_for('sucursales'))
+            fdb.child("Sucursales").push(nueva_sucursal)
+
+            # Add the new sucursal data to the "Inventario" for each product
+            inventario_data = fdb.child("Inventario").get().val()
+            for producto_key in inventario_data.keys():
+                producto_data = inventario_data[producto_key]
+                producto_data["estado"][nombre] = {
+                    "stock": 0,
+                    "ubicacion": "N/A",
+                    "ubicacionespecifica": "N/A"
+                }
+                fdb.child("Inventario").child(producto_key).set(producto_data)
+
+            return redirect(url_for('sucursales'))
     else:
-       return render_template("agregarSucursal.html")
+        return render_template("agregarSucursal.html")
+
 
 @app.route('/detallessucursal/<string:key>')
 @login_required
