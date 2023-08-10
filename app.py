@@ -1,9 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
 from config import auth, fdb
+from celery import Celery
 
 app = Flask(__name__)
 app.secret_key = "felimax2"
+
+app.config['CELERY_BROKER_URL'] = 'redis://red-cja5qldm2m9c73ft4n4g:6379'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+@celery.task
+def procesar_agregar_sucursal(nombre, direccion):
+    nueva_sucursal = {"nombre": nombre, "direccion": direccion}
+    fdb.child("Sucursales").push(nueva_sucursal)
+    inventario_data = fdb.child("Inventario").get().val()
+    for producto_key in inventario_data.keys():
+        producto_data = inventario_data[producto_key]
+        producto_data["estado"][nombre] = {
+            "stock": 0,
+            "ubicacion": "N/A",
+            "ubicacionespecifica": "N/A"
+        }
+        fdb.child("Inventario").child(producto_key).set(producto_data)
+
 
 #-----------------------------------------LOGIN-----------------------------------------------------
 
@@ -99,7 +119,6 @@ def agregar_sucursal():
     if request.method == "POST":
         nombre = request.form["nombre"]
         direccion = request.form["direccion"]
-        nueva_sucursal = {"nombre": nombre, "direccion": direccion}
 
         # Validación, si la sucursal ya existe no se repite, si no hay datos guardados, se compara con la lista nombres = [""]
         datos = fdb.child("Sucursales").get().val()
@@ -112,19 +131,7 @@ def agregar_sucursal():
         if nombre in nombres:
             return render_template('agregarSucursal.html', message='La sucursal ya existe.')
         else:
-            fdb.child("Sucursales").push(nueva_sucursal)
-
-            # Add the new sucursal data to the "Inventario" for each product
-            inventario_data = fdb.child("Inventario").get().val()
-            for producto_key in inventario_data.keys():
-                producto_data = inventario_data[producto_key]
-                producto_data["estado"][nombre] = {
-                    "stock": 0,
-                    "ubicacion": "N/A",
-                    "ubicacionespecifica": "N/A"
-                }
-                fdb.child("Inventario").child(producto_key).set(producto_data)
-
+            procesar_agregar_sucursal.delay(nombre, direccion)
             return redirect(url_for('sucursales'))
     else:
         return render_template("agregarSucursal.html")
