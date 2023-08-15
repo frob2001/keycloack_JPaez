@@ -131,7 +131,7 @@ def agregar_sucursal():
         if nombre in nombres:
             return render_template('agregarSucursal.html', message='La sucursal ya existe.')
         else:
-            procesar_agregar_sucursal.delay(nombre, direccion)
+            procesar_agregar_sucursal(nombre, direccion)
             return redirect(url_for('sucursales'))
     else:
         return render_template("agregarSucursal.html")
