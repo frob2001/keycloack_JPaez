@@ -939,8 +939,8 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
                        nuevo_stock = int(stock[i]) + int(value['estado'][sucursal_seleccionada]['stock'])
                     else:
                        nuevo_stock = int(value['estado'][sucursal_seleccionada]['stock'])
-                       stock_envio = fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).child('stock').get().val()
-                       fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).update({"stock":int(stock_envio)+int(stock[i])})
+                       #stock_envio = fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).child('stock').get().val()
+                       #fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).update({"stock":int(stock_envio)+int(stock[i])})
 
                     fdb.child('Inventario').child(key).child('estado').child(sucursal_seleccionada).update({"stock": nuevo_stock})
        return redirect(url_for('entradas_sucursal'))
