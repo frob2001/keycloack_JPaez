@@ -2,7 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from functools import wraps
 from config import auth, fdb
 from celery import Celery
+import firebase_admin
+from firebase_admin import auth as firebase_auth
+from firebase_admin import credentials
 
+cred = credentials.Certificate("jpaezdemo-firebase-adminsdk-lhn8g-e1a85224f0.json")
+firebase_admin.initialize_app(cred)
 app = Flask(__name__)
 app.secret_key = "felimax2"
 
@@ -167,13 +172,12 @@ def crear_usuario():
         if password == confirm_password:
             try:
                 user = auth.create_user_with_email_and_password(email, password)
-                idToken = user['idToken']
                 fdb.child("Usuarios").child(user['localId']).set({
                     "nombre": nombre,
                     "apellido": apellido,
                     "email": email,
-                    "role": role,
-                    "idToken":idToken
+                    "password":password,
+                    "role": role
                 })
 
                 return redirect('/usuarios/')
@@ -199,8 +203,10 @@ def detalles_usuarios(key):
 def eliminar_usuarios(key):
     campo = fdb.child('Usuarios').child(key).get().val()
 
-    idToken = campo['idToken']
-    auth.delete_user_account(idToken)
+    # Elimina el usuario de Firebase Authentication
+    user = firebase_auth.get_user_by_email(campo['email'])
+    firebase_auth.delete_user(user.uid)
+
     
     fdb.child("Usuarios").child(key).remove()
 
