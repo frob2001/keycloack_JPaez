@@ -513,20 +513,12 @@ def crear_salida(sucursal_seleccionada):
     else:
       datos = fdb.child("Sucursales").get().val()
       nombres = [sucursal_seleccionada['nombre'] for sucursal_seleccionada in datos.values()]
-      productos_con_stock = {}
-      datos = fdb.child("Inventario").get().val()
-      for producto in datos.values():
-          sucursal_info = producto["estado"]
-          estado = sucursal_info[sucursal_seleccionada]
-          stock = estado["stock"]
-          if stock > 0:
-            oems=[]
-            for data in producto['oems'].values():
-              for x in range (1, len(data)):
-                oems.append(str(data[0]) + str(data[x]))
-            productos_con_stock[producto["codigo"]] = [oems, producto["descripcion"], stock, producto["precio"]]
-        
-          print(productos_con_stock)
+      
+      inventario_ref = fdb.child('Inventario')
+      query = inventario_ref.order_by_child('estado/'+ sucursal_seleccionada +'/stock').start_at(1)  # Solo productos con stock > 0
+      productos_con_stock = query.get().val()
+
+      print(productos_con_stock)
         
       return render_template("agregar_salidas.html", productos=productos_con_stock, nombres=nombres, sucursal_seleccionada=sucursal_seleccionada)
 

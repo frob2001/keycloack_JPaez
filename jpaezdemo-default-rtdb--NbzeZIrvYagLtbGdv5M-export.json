@@ -1,0 +1,35 @@
+{
+  "codigo": "P2015V",
+  "descripcion": "PLUMAS DEL 407 AMBOS ",
+  "estado": {
+    "9 de Octubre": {
+      "stock": 0,
+      "ubicacion": "P12",
+      "ubicacionespecifica": "F2"
+    },
+    "Sur": {
+      "stock": 0,
+      "ubicacion": "N/A",
+      "ubicacionespecifica": "N/A"
+    },
+    "Tumbaco": {
+      "stock": 0,
+      "ubicacion": "N/A",
+      "ubicacionespecifica": "N/A"
+    },
+    "Valle": {
+      "stock": 0,
+      "ubicacion": "N/A",
+      "ubicacionespecifica": "N/A"
+    }
+  },
+  "marca": "VALEO ",
+  "oems": {
+    "oem0": [
+      "VU408"
+    ]
+  },
+  "precio": 70,
+  "precioiva": 78.4,
+  "referencia": "574317"
+}

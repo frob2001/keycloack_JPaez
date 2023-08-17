@@ -221,7 +221,7 @@
     for (var i = 0; i < radios.length; i++) {
       if (radios[i].checked) {
         seleccionado = true;
-        codigoProducto = radios[i].value;
+        codigoProducto = radios[i].parentNode.nextElementSibling.textContent;
         descripcionProducto = radios[i].parentNode.nextElementSibling.nextElementSibling.textContent;
         break;
       }
@@ -557,7 +557,6 @@
         </select>        
     </div>
     <br>    
-
     <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
     <a href="/salidas/"> 
         <button class="btn btn-lightGray mt-4" type="button">Cancelar</button>
@@ -580,25 +579,35 @@
                     <th>Código</th>
                     <th>Descripción</th>
                     <th>OEMs</th>
-                    <th>Precio</th>
+                    <th>Precio (IVA)</th>
                     <th>Stock</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for codigo, producto in productos.items() %}
-                  <tr>
-                    <td><input type="radio" name="producto_radio" value="{{ codigo }}" onclick="seleccionarProducto()"></td>
-                    <td>{{ codigo }}</td>
-                    <td>{{ producto[1] }}</td>
-                    <td>{{ producto[0]|join(', ') }}</td>
-                    <td>{{ producto[3] }}</td>
-                    <td>{{ producto[2] }}</td>
-                  </tr>
-                  {% endfor %}
+                  {% if productos %}
+                    {% for key, value in productos.items() %}
+                        <tr>
+                            <td><input type="radio" name="producto_radio" value="{{ value['codigo'] }}" onclick="seleccionarProducto()"></td>
+                            <td>{{ value['codigo'] }}</td>
+                            <td>{{ value['descripcion'] }}</td>
+                            
+                            <td>
+                                {% for data in value['oems'].values() %}
+                                    {% for x in range (1, data|length) %}
+                                        {{ data[0] }}{{ data[x] }} <br>
+                                    {% endfor %}
+                                {% endfor %}
+                            </td>                 
+                            
+                            <td>{{ value['precioiva'] }}</td>
+                            <td>{{ value['estado'][ sucursal_seleccionada ]['stock'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
                 </tbody>
               </table>
               <p style="color: #ffffff;">Producto seleccionado:</p>
-              <p id="seleccionado" style="color: #ffffff;">  </p>
+              <p id="seleccionado" style="color: #ffffff;"></p>
               <p style="color: #ffffff;">Cantidad:</p>
               <input class="form-control modal-input"type="number" id="cantidad" required>
             </div>
