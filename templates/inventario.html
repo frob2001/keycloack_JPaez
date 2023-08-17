@@ -7,6 +7,9 @@
 {% block body %}
 
 <style>
+    html{
+        font-size: small;
+    }
     input{
         height: 25px;
     }
@@ -44,19 +47,17 @@
     }
     .btn-lightGray
     {
-        
         cursor: pointer;
         outline: 0;
         color: #FFFFFF;
         background-color: #787878;
         border-color: #787878;
         display: inline-block;
-        font-weight: 400;
         line-height: 1.5;
         text-align: center;
         border: 1px solid transparent;
         padding: 6px 12px;
-        font-size: 16px;
+        font-size: 10px;
         border-radius: .25rem;
         transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;   
     }
@@ -190,7 +191,7 @@
                         <td class="data">{{ stock }}</td>
                     {% endfor %}
                 {% endif %}
-                <td style="width:25px">
+                <td>
                     <a href="/detalles_producto/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
                 </td>
             </tr>
