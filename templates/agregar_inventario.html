@@ -20,10 +20,7 @@
     }
     
     .right {
-      margin-bottom: 20px;
       float: right;
-      border-radius: 5px;
-      padding: 15px;
     }
     
     input[type="text"] {
@@ -38,6 +35,14 @@
     }
     .right input[type="number"] {
       width: 100%;
+    }
+
+    .blackbox{
+      border-radius: 5px;
+      background-color: black;
+      text-align: left;
+      padding: 10px;
+      margin-bottom: 10px;
     }
     
     @media (max-width: 600px) {
@@ -89,9 +94,10 @@
   </div>
   
     {% if nombres %}
+    <div class="right">
     {% for nom in nombres %}
     <h3 class="text-light"> {{ nom }}</h3> 
-    <div class="right" style="background-color: black;">
+    <div class="blackbox">
         <label style="color: #FFFFFF;">Ubicación</label>
         <input type="text" class="form-control" name="ubicacion {{ nom }}">
         <label style="color: #FFFFFF;">Ubicación especifica</label>
@@ -100,6 +106,7 @@
         <input type="text" class="form-control" name="stock {{ nom }}"  pattern="[0-9]*">
     </div>
     {% endfor %}
+    </div>
     {% endif %}
 
     <button class="btn btn-lightGray mt-4" type="submit">Crear</button>

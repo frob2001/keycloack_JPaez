@@ -45,10 +45,7 @@
         }
           
         .right {
-            margin-bottom: 20px;
             float: right;
-            border-radius: 5px;
-            padding: 15px;
         }
           
         input[type="text"] {
@@ -64,6 +61,13 @@
         }
         .right input[type="number"] {
             width: 100%;
+        }
+        .blackbox{
+            border-radius: 5px;
+            background-color: black;
+            text-align: left;
+            padding: 10px;
+            margin-bottom: 10px;
         }
         
         @media (max-width: 600px) {
@@ -132,9 +136,10 @@
   </div>
 
     {% if campo %}
+    <div class="right">
         {% for estado, datos in campo['estado'].items() %}
             <h3 style="color: #FFFFFF; font-size:x-large;">{{ estado }}</h3>
-                <div class="right" style="background-color: black;">
+                <div class="blackbox">
                     <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
                     <input type="text" class="form-control" name="ubicacion {{ estado }}" value="{{ datos['ubicacion'] }}">
                 
@@ -143,8 +148,9 @@
                 
                     <h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
                     <input type="text" class="form-control" name="stock {{ estado }}" value="{{ datos['stock'] }}">
-                </div>
+                </div>        
         {% endfor %}
+    </div>
     {% endif %}
 
     <button class="btn btn-lightGray mt-4" type="submit">Actualizar</button>
