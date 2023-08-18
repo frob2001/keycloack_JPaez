@@ -914,16 +914,17 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
             checkbox_values.append("Si")
           else:
             checkbox_values.append("No")
-        
-       if "No" in checkbox_values:
-          estado = "INCOMPLETO"
-       else:
-          estado = "RECIBIDO"
 
-       comentario = request.form['comentario']
-       fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).update({"comentario": comentario, "recibidos": checkbox_values, "envio":estado})
-       fdb.child('Salidas').child(entradas['sucursal_envio']).child(entradas['salida']).update({"envio":estado})
-       for i, producto in enumerate(entradas['productos']):
+       if entradas['envio'] != "RECIBIDO":
+        if "No" in checkbox_values:
+            estado = "INCOMPLETO"
+        else:
+            estado = "RECIBIDO"
+        comentario = request.form['comentario']
+        fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).update({"comentario": comentario, "recibidos": checkbox_values, "envio":estado})
+        fdb.child('Salidas').child(entradas['sucursal_envio']).child(entradas['salida']).update({"envio":estado})
+
+        for i, producto in enumerate(entradas['productos']):
             codigo_producto = producto.split(":")[0]
             for key, value in inventario.items():
                 if value['codigo'] == codigo_producto:
@@ -944,6 +945,7 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
             codigo_producto = producto.split(":")[0]
             cantidad = entradas['cantidades'][i]
             recibido = entradas['recibidos'][i]
+            print(entradas['envio'])
             for key, value in inventario.items():
                 if value['codigo'] == codigo_producto:
                     descripcion = value['descripcion']
