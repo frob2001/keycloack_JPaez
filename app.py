@@ -936,6 +936,9 @@ def detalles_entradas_sucursal(sucursal_seleccionada, key):
                        #fdb.child('Inventario').child(key).child('estado').child(entradas['sucursal_envio']).update({"stock":int(stock_envio)+int(stock[i])})
 
                     fdb.child('Inventario').child(key).child('estado').child(sucursal_seleccionada).update({"stock": nuevo_stock})
+       elif entradas['envio'] != "RECIBIDO":
+          comentario = request.form['comentario']
+          fdb.child('Entradas_Sucursal').child(sucursal_seleccionada).child(key).update({"comentario": comentario})
        return redirect(url_for('entradas_sucursal'))
     else:
         print(key)
