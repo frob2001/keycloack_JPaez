@@ -135,7 +135,6 @@
         border: hidden;
     }
     .subtable td{
-        padding: 4px;
         border: 1px solid black;
     }
     .datas{
@@ -213,7 +212,6 @@
                         <td class="data">{{ compra['documento'] }}</td>
                         <td class="data">{{ compra['fecha'] }}</td>
                         <td class="data">{{ compra['tipo_compra'] }}</td>
-
                         <td class="datas" style="padding: 0px;">
                             <table class="subtable">
                                 {% for i in range(compra['productos']|length) %}
