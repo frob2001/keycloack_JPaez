@@ -130,6 +130,17 @@
     table.table-bordered > tbody > tr > td{
         border:1px solid black;
     }
+    .subtable{
+        padding: 0px;
+        border: hidden;
+    }
+    .subtable td{
+        padding: 4px;
+        border: 1px solid black;
+    }
+    .datas{
+        padding: 0px;
+    }
     @media (max-width: 767px) {
         .only-table-wrapper {
             overflow-x: auto;
@@ -197,7 +208,7 @@
             <tr>
                 <th class="header">No. Documento</th>
                 <th class="header">Fecha</th>
-                <th class="header">Productos</th>
+                <th class="header">Productos/Cantidad</th>
                 <th class="header">Precio</th>
                 <th class="header">Tipo de pago</th>
                 <th class="header">Cliente/Sucursales</th>
@@ -210,20 +221,25 @@
                     <tr>
                         <td class="data">{{ venta['documento'] }}</td>
                         <td class="data">{{ venta['fecha'] }}</td>
-                        <td class="data">
-                            {% for producto in venta['productos'] %}
-                                {{ producto }}<br>
-                            {% endfor %}
+                        <td class="datas" style="padding: 0px;">
+                            <table class="subtable">
+                                {% for i in range(venta['productos']|length) %}
+                                    <tr>
+                                        <td>{{ venta['productos'][i] }}</td>
+                                        <td style="width: 40px;">{{ venta['cantidades'][i] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
                         </td>
                         <td class="data">${{ venta['total'] }}</td>
                         <td class="data">{{ venta['tipo_pago'] }}</td>
-
+        
                         <td class="data">
-                        {% if venta['cliente'] == "N/A"%}
-                            {{ venta['sucursal'] }}
-                        {% else %}
-                            {{ venta['cliente'] }}
-                        {% endif %}
+                            {% if venta['cliente'] == "N/A" %}
+                                {{ venta['sucursal'] }}
+                            {% else %}
+                                {{ venta['cliente'] }}
+                            {% endif %}
                         </td>
                         <td>
                             <a href="/detalles_salida/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
@@ -232,8 +248,10 @@
                 {% endfor %}
             {% endif %}
         </tbody>
+        
     </table>
 </div>
+  
 
 <script>
     document.getElementById('sucursal').addEventListener('change', function() {

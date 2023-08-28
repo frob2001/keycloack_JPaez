@@ -130,6 +130,17 @@
     table.table-bordered > tbody > tr > td{
         border:1px solid black;
     }
+    .subtable{
+        padding: 0px;
+        border: hidden;
+    }
+    .subtable td{
+        padding: 4px;
+        border: 1px solid black;
+    }
+    .datas{
+        padding: 0px;
+    }
     @media (max-width: 767px) {
         .only-table-wrapper {
             overflow-x: auto;
@@ -190,8 +201,7 @@
                 <th class="header">No. Documento</th>
                 <th class="header">Fecha</th>
                 <th class="header">Tipo</th>
-                <th class="header">Productos</th>
-                <th class="header">Cantidades</th>
+                <th class="header">Productos/Cantidades</th>
                 <th class="header">Total</th>
                 <th><h2>Detalles</h2></th>
             </tr>
@@ -204,20 +214,19 @@
                         <td class="data">{{ compra['fecha'] }}</td>
                         <td class="data">{{ compra['tipo_compra'] }}</td>
 
-                        <td class="data">
-                            {% for producto in compra['productos'] %}
-                                {{ producto }}<br>
-                            {% endfor %}
-                        </td>
-
-                        <td class="data">
-                            {% for cantidad in compra['cantidades'] %}
-                                {{ cantidad }}<br>
-                            {% endfor %}
+                        <td class="datas" style="padding: 0px;">
+                            <table class="subtable">
+                                {% for i in range(compra['productos']|length) %}
+                                    <tr>
+                                        <td>{{ compra['productos'][i] }}</td>
+                                        <td style="width: 40px;">{{ compra['cantidades'][i] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
                         </td>
                         <td class="data">${{ compra['total'] }}</td>
                         <td>
-                            <a href="/detalles_entrada_compra/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                            <a href="/detalles_entrada_compra/{{ key }}" class="btn btn-lightGray">Ver</a>
                         </td>
                     </tr>
                 {% endfor %}
