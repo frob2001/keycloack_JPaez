@@ -130,10 +130,10 @@
 <p style="color: #FFFFFF;">{{ campo['referencia'] }}</p>
 
 <h1 style="color: #FFFFFF; font-size:x-large;">Precio</h1>
-<p style="color: #FFFFFF;">{{ campo['precio'] }}</p>
+<p style="color: #FFFFFF;">${{ '{:.2f}'.format(campo['precio']) }}</p>
 
 <h1 style="color: #FFFFFF; font-size:x-large;">Precio(IVA)</h1>
-<p style="color: #FFFFFF;">{{ campo['precioiva'] }}</p>
+<p style="color: #FFFFFF;">${{ '{:.2f}'.format(campo['precioiva']) }}</p>
 
 </div>
 

@@ -152,7 +152,7 @@
     <div class="left">
     
     <h1 style="color: #FFFFFF; font-size:x-large;">Total</h1>
-    <p style="color: #FFFFFF;">{{ salida['total'] }}</p>
+    <p style="color: #FFFFFF;">${{ salida['total'] }}</p>
     
     <h1 style="color: #FFFFFF; font-size:x-large;">Descuento</h1>
     <p style="color: #FFFFFF;">{{ salida['descuento'] }}%</p>
@@ -188,7 +188,7 @@
           <tr>
             <td>{{ salida['productos'][index] }}</td>
             <td>{{ salida['cantidades'][index] }}</td>
-            <td>{{ salida['precio'][index] }}</td>
+            <td>${{ '{:.2f}'.format(salida['precio'][index]|float) }}</td>
           </tr>
           {% endfor %}
         </tbody>
