@@ -42,20 +42,22 @@
             width: 80%;
             margin: 0 auto;
         }
-            
-        .left, .right {
+
+      .left {
           width: 50%;
-        }
+          height: 100%;
+      }
+          
+      .right {
+        width: 50%;
+      }
         
         .left {
           float: left;
         }
         
         .right {
-          margin-bottom: 20px;
           float: right;
-          border-radius: 5px;
-          padding: 15px;
         }
         
         h1, p {
@@ -71,12 +73,19 @@
         .left textarea{
           width: 80%;
         }
-        .envio-status {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-      }
-        
+        .blackbox{
+          border-radius: 5px;
+          background-color: black;
+          text-align: left;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+          .envio-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+          
         @media (max-width: 600px) {
           .left, .right {
             width: 100%;
@@ -156,33 +165,31 @@
 <br>
 <br>
 </div>
-
+<div class="right">
   {% for codigo_producto, info in ubicaciones.items() %}
-  <h3 style="color: #FFFFFF; font-size:x-large;">{{ codigo_producto }}</h3>
-  <h5 style="color: #FFFFFF;"> {{ info.descripcion }}</h5>
-  <input id="codigo" name="codigo" type="hidden" value={{ codigo_producto }}>
-  <div class="right" style="background-color: black;">
+    <h3 style="color: #FFFFFF; font-size:x-large;">{{ codigo_producto }}</h3>
+    <h5 style="color: #FFFFFF;"> {{ info.descripcion }}</h5>
+    <input id="codigo" name="codigo" type="hidden" value={{ codigo_producto }}>
+    <div class="blackbox">
 
-    <div style="display: flex;">
-      <input type="checkbox" name="checkbox_{{codigo_producto}}" {% if info.recibido == "Si" %} checked {% endif %}> 
-      <p>Recibido</p>
-    </div>
-    
-
-    
-      <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
-      <input type="text" class="form-control" name="ubicacion" value="{{ info.ubicacion }}">
+        <input type="checkbox" name="checkbox_{{codigo_producto}}" id="checkbox_{{codigo_producto}}" {% if info.recibido == "Si" %} checked {% endif %}> 
+        <label for="checkbox_{{codigo_producto}}">Recibido</label>
       
-      <br>
-      <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación especifica</h1>
-      <input type="text" class="form-control" name="ubicacionespecifica" value="{{ info.ubicacion_especifica }}">
+        <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
+        <input type="text" class="form-control" name="ubicacion" value="{{ info.ubicacion }}">
+        
+        <br>
+        <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación bodega</h1>
+        <input type="text" class="form-control" name="ubicacionespecifica" value="{{ info.ubicacion_especifica }}">
 
-      <br>
-      <h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
-      <input type="text" class="form-control" name="stock" value="{{ info.cantidad }}" hidden>
-      <p style="margin-left: 10px;">{{ info.cantidad }}</p>
-  </div>
+        <br>
+        <h1 style="color: #FFFFFF; font-size:x-large;">Stock</h1>
+        <input type="text" class="form-control" name="stock" value="{{ info.cantidad }}" hidden>
+        <p style="margin-left: 10px;">{{ info.cantidad }}</p>
+    </div>
+    <br>
   {% endfor %}
+</div>
 
   <button class="btn btn-lightGray mt-4" type="submit">Crear</button>
 </form>
