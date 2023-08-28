@@ -95,6 +95,11 @@
     table {
         width: 100%;
     }
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        text-align: center;
+    }
     
     tbody{
         background-color: white;
@@ -210,7 +215,7 @@
                                 {{ cantidad }}<br>
                             {% endfor %}
                         </td>
-                        <td class="data">{{ compra['total'] }}</td>
+                        <td class="data">${{ compra['total'] }}</td>
                         <td>
                             <a href="/detalles_entrada_compra/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
                         </td>

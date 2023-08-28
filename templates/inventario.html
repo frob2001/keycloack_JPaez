@@ -83,9 +83,10 @@
         background: black;
         color: white;
     }
-    td {
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
         text-align: center;
-        padding: 8px;
     }
     h2, .h2{
         margin: 0;
@@ -183,7 +184,7 @@
                 
                 <td class="data">{{ value['marca'] }}</td>
                 <td class="data">{{ value['referencia'] }}</td>
-                <td class="data">{{ value['precioiva'] }}</td>
+                <td class="data">${{ '{:.2f}'.format(value['precioiva']) }}</td>
                 {% if nombres %}
                     {% for nom in nombres %}
                         {% set sucursal_info = value['estado'] %}
@@ -193,7 +194,7 @@
                     {% endfor %}
                 {% endif %}
                 <td>
-                    <a href="/detalles_producto/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                    <a href="/detalles_producto/{{ key }}" class="btn btn-lightGray">ver</a>
                 </td>
             </tr>
         {% endfor %}

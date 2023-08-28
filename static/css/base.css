@@ -101,8 +101,8 @@ div.dataTables_length select {
 }
 
 #sidebar {
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 150px;
+    max-width: 150px;
     background: #000000;
     color: #fff;
     transition: all 0.3s;
@@ -116,7 +116,7 @@ div.dataTables_length select {
 #sidebar .sidebar-header img {
     margin: auto; /* Esto centra la imagen horizontalmente */
     width: 100%; /* La imagen ocupa el 100% del ancho disponible */
-    max-width: 200px; /* La imagen no se hace más grande que 200 píxeles de ancho */
+    max-width: 120px; /* La imagen no se hace más grande que 200 píxeles de ancho */
 }
 
 #sidebar ul li a {
@@ -185,13 +185,13 @@ a[data-toggle="collapse"] {
     MEDIAQUERIES
 ----------------------------------------------------- */
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .wrapper{
         overflow-y: hidden;
         overflow-x: hidden;
     }
     #sidebar {
-        margin-left: -250px;
+        margin-left: -150px;
     }
     #sidebar.active {
         margin-left: 0;

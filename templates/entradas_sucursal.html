@@ -95,6 +95,11 @@
     table {
         width: 100%;
     }
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        text-align: center;
+    }
     
     tbody{
         background-color: white;
@@ -211,7 +216,7 @@
                                 {{ producto }}<br>
                             {% endfor %}
                         </td>
-                        <td class="data">{{ entrada['total'] }}</td>
+                        <td class="data">${{ entrada['total'] }}</td>
                         <td class="data">{{ entrada['sucursal_envio'] }}</td>
 
                         <td class="data" style="{{ 'color: green' if entrada['envio'] == 'RECIBIDO' else 'color: red' if entrada['envio'] == 'INCOMPLETO' else 'color: orange' if entrada['envio'] == 'PENDIENTE' else '' }}"><h6>{{ entrada['envio'] }}</h6></td>
