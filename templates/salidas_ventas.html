@@ -178,7 +178,7 @@
     </div>
     <div class="col-sm-12 col-md-6" id="createbutton">
         <a href="/crear_salida/{{ sucursal_seleccionada }}">
-            <button class="btn btn-lightGray float-end">Generar salida</button>
+            <button class="btn btn-success float-end">Generar salida</button>
         </a>
     </div>
 </div>
@@ -216,6 +216,7 @@
                 <th class="header">Precio</th>
                 <th class="header">Tipo de pago</th>
                 <th class="header">Cliente/Sucursales</th>
+                <th class="header">Estado</th>
                 <th><h2>Detalles</h2></th>
             </tr>
         </thead>
@@ -245,8 +246,9 @@
                                 {{ venta['cliente'] }}
                             {% endif %}
                         </td>
+                        <td class="data" style="{{ 'color: #218838' if venta['envio'] == 'RECIBIDO' else 'color: red' if venta['envio'] == 'INCOMPLETO' else 'color: orange' if venta['envio'] == 'PENDIENTE' else '' }}"><h6 style="font-size: 18px;">{{ venta['envio'] }}</h6></td>
                         <td>
-                            <a href="/detalles_salida/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
+                            <a href="/detalles_salida/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">ver</a>
                         </td>
                     </tr>
                 {% endfor %}

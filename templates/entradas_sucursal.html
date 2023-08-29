@@ -234,7 +234,7 @@
                         <td class="data">${{ entrada['total'] }}</td>
                         <td class="data">{{ entrada['sucursal_envio'] }}</td>
 
-                        <td class="data" style="{{ 'color: green' if entrada['envio'] == 'RECIBIDO' else 'color: red' if entrada['envio'] == 'INCOMPLETO' else 'color: orange' if entrada['envio'] == 'PENDIENTE' else '' }}"><h6>{{ entrada['envio'] }}</h6></td>
+                        <td class="data" style="{{ 'color: green' if entrada['envio'] == 'RECIBIDO' else 'color: red' if entrada['envio'] == 'INCOMPLETO' else 'color: orange' if entrada['envio'] == 'PENDIENTE' else '' }}"><h6 style="font-size: 18px;">{{ entrada['envio'] }}</h6></td>
 
                         <td>
                             <a href="/detalles_entradas_sucursal/{{sucursal_seleccionada}}/{{ key }}" class="btn btn-lightGray">Ver detalles</a>
