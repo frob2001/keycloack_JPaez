@@ -188,14 +188,27 @@
 </style>
 
 <script>
-  function activarInput(inputId) {
+function activarInput(inputId) {
     // Desactivar ambos inputs
     document.getElementById('cliente').disabled = true;
     document.getElementById('sucursal').disabled = true;
     
     // Activar el input correspondiente al radio button seleccionado
     document.getElementById(inputId).disabled = false;
-  }
+
+    // Desactivar el selector de "Tipo de pago" por defecto
+    document.getElementById('tipo_pago').disabled = true;
+
+    // Si se selecciona el radio button "Sucursal", habilitar "Tipo de pago" y establecerlo en "efectivo"
+    if (inputId === 'cliente') {
+        document.getElementById('tipo_pago').disabled = false;  
+    }
+    else{
+      document.getElementById('tipo_pago').value = 'efectivo';
+      document.getElementById('tipo_pago').disabled = true; 
+    }
+}
+
 
   function validarFormulario() {
     var radios = document.getElementsByName('radio');
@@ -528,13 +541,13 @@
   </div>
 
   <div class="right">
-    <input type="radio" name="radio" onclick="activarInput('cliente')"> 
+    <input type="radio" name="radio" id="radioCliente" onclick="activarInput('cliente')"> 
     <label style="color: #FFFFFF;">Cliente</label>
     <br>
     <input type="text" class="form-control" id="cliente" name="cliente" pattern="^(?!\s*$).{3,}$" title="Mínimo 3 caracteres" disabled required>
 
     <br>
-    <input type="radio" name="radio" onclick="activarInput('sucursal')">
+    <input type="radio" name="radio" id="radioSucursal" onclick="activarInput('sucursal')">
     <label style="color: #FFFFFF;">Sucursal</label>
     <div class="form-group">
         <select class="form-control" id="sucursal" name="sucursal" disabled required>
@@ -551,8 +564,9 @@
     <br>    
     
     <label style="color: #FFFFFF;">Tipo de pago</label>
+    <label style="color: #FFFFFF;">Tipo de pago</label>
     <div class="form-group">
-        <select class="form-control" id="tipo_pago" name="tipo_pago">
+        <select class="form-control" id="tipo_pago" name="tipo_pago" disabled>
             <option value="efectivo">EFECTIVO</option>
             <option value="tarjeta">TARJETA</option>
             <option value="transferencia">TRANSFERENCIA</option>
