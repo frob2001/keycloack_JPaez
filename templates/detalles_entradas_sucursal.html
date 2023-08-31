@@ -80,6 +80,9 @@
           padding: 10px;
           margin-bottom: 10px;
         }
+        .blackbox.selected {
+          background-color: #007100;
+      }
           .envio-status {
             position: absolute;
             top: 10px;
@@ -172,14 +175,17 @@
     <input id="codigo" name="codigo" type="hidden" value={{ codigo_producto }}>
     <div class="blackbox">
 
-        <input type="checkbox" name="checkbox_{{codigo_producto}}" id="checkbox_{{codigo_producto}}" {% if info.recibido == "Si" %} checked {% endif %}> 
-        <label for="checkbox_{{codigo_producto}}">Recibido</label>
+      <input type="checkbox" name="checkbox_{{codigo_producto}}" id="checkbox_{{codigo_producto}}"
+       {% if info.recibido == "Si" %} checked {% endif %}
+       onclick="toggleBlackBoxStyle(this)"> 
+
+     <label for="checkbox_{{codigo_producto}}">Recibido</label>
       
         <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación</h1>
         <input type="text" class="form-control" name="ubicacion" value="{{ info.ubicacion }}">
         
         <br>
-        <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación bodega</h1>
+        <h1 style="color: #FFFFFF; font-size:x-large;">Ubicación especifica</h1>
         <input type="text" class="form-control" name="ubicacionespecifica" value="{{ info.ubicacion_especifica }}">
 
         <br>
@@ -187,7 +193,6 @@
         <input type="text" class="form-control" name="stock" value="{{ info.cantidad }}" hidden>
         <p style="margin-left: 10px;">{{ info.cantidad }}</p>
     </div>
-    <br>
   {% endfor %}
 </div>
 
@@ -195,6 +200,25 @@
 </form>
   
 
+<script>
+  // Función para cambiar la clase del blackbox cuando cambia el estado del checkbox
+  function toggleBlackBoxStyle(checkbox) {
+      var blackbox = checkbox.closest(".blackbox");
+      if (checkbox.checked) {
+          blackbox.classList.add("selected");
+      } else {
+          blackbox.classList.remove("selected");
+      }
+  }
+
+  // Al cargar la página, aplicar el estilo inicial a los blackbox
+  document.addEventListener("DOMContentLoaded", function() {
+      var checkboxes = document.querySelectorAll("[type='checkbox']");
+      checkboxes.forEach(function(checkbox) {
+          toggleBlackBoxStyle(checkbox);
+      });
+  });
+</script>
 
 
 
