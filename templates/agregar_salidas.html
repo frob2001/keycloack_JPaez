@@ -197,18 +197,17 @@ function activarInput(inputId) {
     document.getElementById(inputId).disabled = false;
 
     // Desactivar el selector de "Tipo de pago" por defecto
-    document.getElementById('tipo_pago').disabled = true;
+    document.getElementById('tipo_pago_select').disabled = true;
 
     // Si se selecciona el radio button "Sucursal", habilitar "Tipo de pago" y establecerlo en "efectivo"
     if (inputId === 'cliente') {
-        document.getElementById('tipo_pago').disabled = false;  
+        document.getElementById('tipo_pago_select').disabled = false;  
     }
     else{
-      document.getElementById('tipo_pago').value = 'efectivo';
-      document.getElementById('tipo_pago').disabled = true; 
+      document.getElementById('tipo_pago_select').value = 'efectivo';
+      document.getElementById('tipo_pago_select').disabled = true; 
     }
 }
-
 
   function validarFormulario() {
     var radios = document.getElementsByName('radio');
@@ -564,9 +563,8 @@ function activarInput(inputId) {
     <br>    
     
     <label style="color: #FFFFFF;">Tipo de pago</label>
-    <label style="color: #FFFFFF;">Tipo de pago</label>
     <div class="form-group">
-        <select class="form-control" id="tipo_pago" name="tipo_pago" disabled>
+        <select class="form-control" id="tipo_pago_select" name="tipo_pago_select" disabled>
             <option value="efectivo">EFECTIVO</option>
             <option value="tarjeta">TARJETA</option>
             <option value="transferencia">TRANSFERENCIA</option>
@@ -574,8 +572,9 @@ function activarInput(inputId) {
             <option value="crédito">CRÉDITO</option>
             <option value="cheque">CHEQUE</option>
             <option value="mixto">MIXTO</option>
-        </select>        
+        </select>  
     </div>
+    <input type="hidden" id="tipo_pago" name="tipo_pago" value="">      
     <br>    
     <button class="btn btn-lightGray mt-4" type="submit" onkeydown="preventEnter(event)">Crear</button>
     <a href="/salidas/"> 
@@ -640,6 +639,21 @@ function activarInput(inputId) {
     </div>
   </div>
 </form>
+
+<script>
+  document.getElementById("tipo_pago_select").addEventListener("change", function() {
+    onSelect();
+  });
+  
+  
+  function onSelect(){
+    const selectElement = document.getElementById("tipo_pago_select");
+    const valorSeleccionado = selectElement.options[selectElement.selectedIndex].value;
+    document.getElementById("tipo_pago").value = valorSeleccionado;
+  }
+  
+</script>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
