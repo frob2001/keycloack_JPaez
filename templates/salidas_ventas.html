@@ -167,7 +167,10 @@
         padding: 5px; /* Espacio interno en las celdas */
         border: 1px solid #ccc; /* Borde para separar las celdas */
         text-align: center; /* Alinear el contenido al centro */
-    }  
+    } 
+    table{
+        white-space: nowrap;
+      } 
 </style>
 
 
@@ -224,7 +227,7 @@
             <tr>
                 <th class="header">No. Documento</th>
                 <th class="header">Fecha</th>
-                <th class="header">Codigo-Producto-Cantidades</th>
+                <th class="header">Código/Producto/Cantidad</th>
                 <th class="header">Precio</th>
                 <th class="header">Tipo de pago</th>
                 <th class="header">Cliente/Sucursales</th>
@@ -242,7 +245,7 @@
                             <table class="subtable">
                                 {% for i in range(venta['productos']|length) %}
                                     <tr>
-                                        <td style="white-space: nowrap; width: 66px;">{{ venta['productos'][i].split(':')[0] }}</td>
+                                        <td style="white-space: nowrap;">{{ venta['productos'][i].split(':')[0] }}</td>
                                         <td style="white-space: nowrap;">{{ venta['productos'][i].split(':')[1] }}</td>
                                         <td style="width: 10px;">{{ venta['cantidades'][i] }}</td>
                                     </tr>

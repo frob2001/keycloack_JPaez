@@ -201,7 +201,7 @@
                 <th class="header">No. Documento</th>
                 <th class="header">Fecha</th>
                 <th class="header">Tipo</th>
-                <th class="header">Productos/Cantidades</th>
+                <th class="header">Código/Producto/Cantidad</th>
                 <th class="header">Total</th>
                 <th><h2>Detalles</h2></th>
             </tr>
@@ -217,8 +217,9 @@
                             <table class="subtable">
                                 {% for i in range(compra['productos']|length) %}
                                     <tr>
-                                        <td>{{ compra['productos'][i] }}</td>
-                                        <td style="width: 40px;">{{ compra['cantidades'][i] }}</td>
+                                        <td style="white-space: nowrap;">{{ compra['productos'][i].split(':')[0] }}</td>
+                                        <td style="white-space: nowrap;">{{ compra['productos'][i].split(':')[1] }}</td>
+                                        <td style="width: 10px;">{{ compra['cantidades'][i] }}</td>
                                     </tr>
                                 {% endfor %}
                             </table>
