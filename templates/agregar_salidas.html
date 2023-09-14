@@ -294,7 +294,9 @@ function activarInput(inputId) {
     // Resaltar el nuevo valor del stock en color rojo
     filaProducto.cells[5].style.color = 'red';
   
-    var precio = parseFloat(filaProducto.cells[4].textContent);
+    var precioStr = filaProducto.cells[4].textContent; // Obtén el texto de la quinta celda
+    var precioSinDolar = precioStr.substring(1); // Elimina el primer carácter (el "$")
+    var precio = parseFloat(precioSinDolar);
   
     // Crear un nuevo div para mostrar el producto añadido
     var nuevoDiv = document.createElement("div");
@@ -333,7 +335,7 @@ function activarInput(inputId) {
     var pPrecio = document.createElement("p");
     pPrecio.id = "precioproducto";
     pPrecio.name = "precioproducto";
-    var contenidoPrecio = document.createTextNode("Precio: " + precio);
+    var contenidoPrecio = document.createTextNode("Precio: $" + precio);
     pPrecio.appendChild(contenidoPrecio);
     nuevoDiv.appendChild(pPrecio);
 
@@ -347,7 +349,7 @@ function activarInput(inputId) {
     var pTotal = document.createElement("p");
     pTotal.id = "total";
     pTotal.name = "total";
-    var contenidoTotal = document.createTextNode("Total: " + (precio * cantidad).toFixed(2));
+    var contenidoTotal = document.createTextNode("Total: $" + (precio * cantidad).toFixed(2));
     pTotal.appendChild(contenidoTotal);
     nuevoDiv.appendChild(pTotal);
   
@@ -424,12 +426,12 @@ function activarInput(inputId) {
 
     // Sumar los valores de los elementos <p> y actualizar el total general
     for (var i = 0; i < elementosTotal.length; i++) {
-      var valorTotal = parseFloat(elementosTotal[i].textContent.split(':')[1].trim());
+      var valorTotal = parseFloat(elementosTotal[i].textContent.split(': $')[1].trim());
       totalGeneral += valorTotal;
     }
 
     // Actualizar el contenido del div con el id "totalgeneral"
-    document.getElementById("totalgeneral").textContent = "Total: " + totalGeneral.toFixed(2);
+    document.getElementById("totalgeneral").textContent = "Total: $" + totalGeneral.toFixed(2);
     document.querySelector("input[name='totalgeneral']").value = totalGeneral.toFixed(2);
   }
 
@@ -437,7 +439,7 @@ function activarInput(inputId) {
     var cantidad = parseInt(elemento.childNodes[1].textContent.split(':')[1].trim());
     var valorTotal = parseFloat(elemento.childNodes[3].textContent.split(':')[1].trim());
     totalGeneral -= valorTotal;
-    document.getElementById("totalgeneral").textContent = "Total: " + totalGeneral.toFixed(2);
+    document.getElementById("totalgeneral").textContent = "Total: $" + totalGeneral.toFixed(2);
     document.querySelector("input[name='totalgeneral']").value = totalGeneral.toFixed(2);
 
   }
@@ -452,7 +454,7 @@ function activarInput(inputId) {
       var descuentoValor = totalGeneral * descuentoPorcentaje;
   
       var totalConDescuento = totalGeneral - descuentoValor;
-      document.getElementById("totalgeneral").textContent = "Total: " + totalConDescuento.toFixed(2);
+      document.getElementById("totalgeneral").textContent = "Total: $" + totalConDescuento.toFixed(2);
       document.querySelector("input[name='totalgeneral']").value = totalConDescuento.toFixed(2);
     }
   }
@@ -525,7 +527,7 @@ function activarInput(inputId) {
     </button>
 
     <div class="totaldiv" style="justify-content: center;">
-      <p id="totalgeneral" name="totalgeneral" style="margin-bottom: 0px;">Total: 0.00</p>
+      <p id="totalgeneral" name="totalgeneral" style="margin-bottom: 0px;">Total: $0.00</p>
       <input type="hidden" name="totalgeneral" value="0.00">
 
       <div style="display: flex; align-items: center; margin-left: auto;">
@@ -618,7 +620,7 @@ function activarInput(inputId) {
                                 {% endfor %}
                             </td>                 
                             
-                            <td>{{ value['precioiva'] }}</td>
+                            <td>${{ value['precioiva'] }}</td>
                             <td>{{ value['estado'][ sucursal_seleccionada ]['stock'] }}</td>
                         </tr>
                     {% endfor %}
