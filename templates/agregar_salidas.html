@@ -446,7 +446,7 @@ function activarInput(inputId) {
 
   function aplicarDescuento() {
     var descuentoInput = document.getElementById("descuento");
-    var descuento = parseInt(descuentoInput.value);
+    var descuento = parseFloat(descuentoInput.value);
   
     // Verificar si se ingresó un descuento válido
     if (!isNaN(descuento) && descuento >= 0) {
