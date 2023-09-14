@@ -156,6 +156,15 @@
             height: 25px;
         }
     }
+    .subtable {
+        border-collapse: collapse; /* Fusiona los bordes de las celdas */
+    }
+
+    .subtable td {
+        width: 33.33%; /* Divide igualmente el ancho entre las tres celdas */
+        border: 1px solid #000; /* Añade un borde a las celdas (opcional) */
+        padding: 5px; /* Espacio interno en las celdas (ajústalo según tus necesidades) */
+    }
 </style>
 
 
@@ -212,7 +221,7 @@
             <tr>
                 <th class="header">No. Documento</th>
                 <th class="header">Fecha</th>
-                <th class="header">Productos/Cantidades</th>
+                <th class="header">Codigo-Producto-Cantidades</th>
                 <th class="header">Precio</th>
                 <th class="header">Tipo de pago</th>
                 <th class="header">Cliente/Sucursales</th>
@@ -230,7 +239,8 @@
                             <table class="subtable">
                                 {% for i in range(venta['productos']|length) %}
                                     <tr>
-                                        <td>{{ venta['productos'][i] }}</td>
+                                        <td>{{ venta['productos'][i].split(':')[0] }}</td>
+                                        <td>{{ venta['productos'][i].split(':')[1] }}</td>
                                         <td style="width: 40px;">{{ venta['cantidades'][i] }}</td>
                                     </tr>
                                 {% endfor %}
