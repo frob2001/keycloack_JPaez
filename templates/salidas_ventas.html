@@ -242,9 +242,9 @@
                             <table class="subtable">
                                 {% for i in range(venta['productos']|length) %}
                                     <tr>
-                                        <td>{{ venta['productos'][i].split(':')[0] }}</td>
-                                        <td>{{ venta['productos'][i].split(':')[1] }}</td>
-                                        <td style="width: 40px;">{{ venta['cantidades'][i] }}</td>
+                                        <td style="white-space: nowrap; width: 66px;">{{ venta['productos'][i].split(':')[0] }}</td>
+                                        <td style="white-space: nowrap;">{{ venta['productos'][i].split(':')[1] }}</td>
+                                        <td style="width: 10px;">{{ venta['cantidades'][i] }}</td>
                                     </tr>
                                 {% endfor %}
                             </table>
