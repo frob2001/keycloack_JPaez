@@ -440,7 +440,7 @@ def crear_salida(sucursal_seleccionada):
 
       precios = request.form.getlist("precioproducto")
 
-      descuento = int(request.form["descuento"])
+      descuento = float(request.form["descuento"])
 
       print(documento, fecha, cliente, sucursal, tipo_pago, total, descuento, productos, cantidades)
 
