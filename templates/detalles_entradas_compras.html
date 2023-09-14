@@ -144,7 +144,8 @@
     <table class="table table-striped table-bordered" id="example">
         <thead>
           <tr>
-            <th>Código Producto</th>
+            <th>Código</th>
+            <th>Producto</th>
             <th>Cantidad</th>
             <th>Precio</th>
           </tr>
@@ -152,7 +153,8 @@
         <tbody>
             {% for index in range(entrada['productos']|length) %}
             <tr>
-              <td>{{ entrada['productos'][index] }}</td>
+              <td>{{ entrada['productos'][index].split(':')[0] }}</td>
+              <td>{{ entrada['productos'][index].split(':')[1] }}</td>
               <td>{{ entrada['cantidades'][index] }}</td>
               <td>{{ entrada['precio'][index] }}</td>
             </tr>
