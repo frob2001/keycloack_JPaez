@@ -199,12 +199,12 @@ function activarInput(inputId) {
     // Desactivar el selector de "Tipo de pago" por defecto
     document.getElementById('tipo_pago_select').disabled = true;
 
-    // Si se selecciona el radio button "Sucursal", habilitar "Tipo de pago" y establecerlo en "efectivo"
+    // Si se selecciona el radio button "Sucursal", habilitar "Tipo de pago" y establecerlo en "credito"
     if (inputId === 'cliente') {
         document.getElementById('tipo_pago_select').disabled = false;  
     }
     else{
-      document.getElementById('tipo_pago_select').value = 'efectivo';
+      document.getElementById('tipo_pago_select').value = 'credito';
       document.getElementById('tipo_pago_select').disabled = true; 
     }
 }
@@ -571,7 +571,7 @@ function activarInput(inputId) {
             <option value="tarjeta">TARJETA</option>
             <option value="transferencia">TRANSFERENCIA</option>
             <option value="depósito">DEPÓSITO</option>
-            <option value="crédito">CRÉDITO</option>
+            <option value="credito">CRÉDITO</option>
             <option value="cheque">CHEQUE</option>
             <option value="mixto">MIXTO</option>
         </select>  
