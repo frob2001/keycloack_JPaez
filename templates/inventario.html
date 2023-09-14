@@ -172,7 +172,7 @@
         {% for key, value in datos.items() %}
             <tr>
                 <td class="data" style="white-space: nowrap;">{{ value['codigo'] }}</td>
-                <td class="data">{{ value['descripcion'] }}</td>
+                <td class="data" style="white-space: nowrap;">{{ value['descripcion'] }}</td>
                 
                 <td class="data">
                     {% for data in value['oems'].values() %}
